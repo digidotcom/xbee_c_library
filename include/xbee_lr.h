@@ -34,69 +34,71 @@
  */
 
 
-#ifndef XBEELR_H
-#define XBEELR_H
-
-#if defined(__cplusplus)
-extern "C"
-{
-#endif
-
-#include "xbee.h"
-#include "config.h"
-
-#define CONNECTION_TIMEOUT_MS 6000
-#define SEND_DATA_TIMEOUT_MS 10000
-
-// Structure for XBee LR LoRaWAN packet
-typedef struct XBeeLRPacket_s{
-    uint8_t port;
-    uint8_t payloadSize;
-    uint8_t *payload;
-    uint8_t ack;
-    uint8_t status;
-    uint8_t frameId;
-    //For RX only
-    int8_t rssi;
-    int8_t snr;
-    uint8_t dr;
-    uint8_t slot;
-    uint32_t counter;
-    //For TX only
-    uint8_t channel;
-    int8_t power;
-}XBeeLRPacket_t;
-
-// Subclass for XBeeLR
-typedef struct {
-    XBee base;  // Inherit from XBee
-    // Add XBeeLR specific attributes here like methods specific to an XBee type
-} XBeeLR;
-
-
-XBeeLR* XBeeLRCreate(const XBeeCTable* cTable, const XBeeHTable* hTable);
-bool XBeeLRGetDevEUI(XBee* self, uint8_t* responseBuffer, uint8_t buffer_size);
-bool XBeeLRSetAppEUI(XBee* self, const char* value);
-bool XBeeLRSetAppKey(XBee* self, const char* value);
-bool XBeeLRSetNwkKey(XBee* self, const char* value);
-bool XBeeLRSetClass(XBee* self, const char value);
-bool XBeeLRSetActivationMode(XBee* self, const uint8_t value);
-bool XBeeLRSetADR(XBee* self, const uint8_t value);
-bool XBeeLRSetDataRate(XBee* self, const uint8_t value);
-bool XBeeLRSetRegion(XBee* self, const uint8_t value);
-bool XBeeLRSetDutyCycle(XBee* self, const uint8_t value);
-bool XBeeLRGetSpecVersion(XBee* self,  char* responseBuffer, uint8_t buffer_size);
-bool XBeeLRSetJoinRX1Delay(XBee* self, const uint32_t value);
-bool XBeeLRSetJoinRX2Delay(XBee* self, const uint32_t value);
-bool XBeeLRSetRX1Delay(XBee* self, const uint32_t value);
-bool XBeeLRSetRX2Delay(XBee* self, const uint32_t value);
-bool XBeeLRSetRX2DataRate(XBee* self, const uint8_t value);
-bool XBeeLRSetRX2Frequency(XBee* self, const uint32_t value);
-bool XBeeLRSetTransmitPower(XBee* self, const uint8_t value);
-bool XBeeLRSetChannelsMask(XBee* self, const char* value);
-
-#if defined(__cplusplus)
-}
-#endif
-
-#endif // XBEELR_H
+ #ifndef XBEELR_H
+ #define XBEELR_H
+ 
+ #if defined(__cplusplus)
+ extern "C"
+ {
+ #endif
+ 
+ #include "xbee.h"
+ #include "config.h"
+ 
+ //Minimum Connection Timeout required for EU868 Join is 8000ms
+ #define CONNECTION_TIMEOUT_MS 8000 
+ #define SEND_DATA_TIMEOUT_MS 10000
+ 
+ // Structure for XBee LR LoRaWAN packet
+ typedef struct XBeeLRPacket_s{
+     uint8_t port;
+     uint8_t payloadSize;
+     uint8_t *payload;
+     uint8_t ack;
+     uint8_t status;
+     uint8_t frameId;
+     //For RX only
+     int8_t rssi;
+     int8_t snr;
+     uint8_t dr;
+     uint8_t slot;
+     uint32_t counter;
+     //For TX only
+     uint8_t channel;
+     int8_t power;
+ }XBeeLRPacket_t;
+ 
+ // Subclass for XBeeLR
+ typedef struct {
+     XBee base;  // Inherit from XBee
+     // Add XBeeLR specific attributes here like methods specific to an XBee type
+ } XBeeLR;
+ 
+ 
+ XBeeLR* XBeeLRCreate(const XBeeCTable* cTable, const XBeeHTable* hTable);
+ bool XBeeLRGetDevEUI(XBee* self, char* responseBuffer, uint8_t buffer_size);
+ bool XBeeLRSetAppEUI(XBee* self, const char* value);
+ bool XBeeLRSetAppKey(XBee* self, const char* value);
+ 
+ bool XBeeLRSetNwkKey(XBee* self, const char* value);
+ bool XBeeLRSetClass(XBee* self, const char value);
+ bool XBeeLRSetActivationMode(XBee* self, const uint8_t value);
+ bool XBeeLRSetADR(XBee* self, const uint8_t value);
+ bool XBeeLRSetDataRate(XBee* self, const uint8_t value);
+ bool XBeeLRSetRegion(XBee* self, const uint8_t value);
+ bool XBeeLRSetDutyCycle(XBee* self, const uint8_t value);
+ bool XBeeLRGetSpecVersion(XBee* self,  char* responseBuffer, uint8_t buffer_size);
+ bool XBeeLRSetJoinRX1Delay(XBee* self, const uint32_t value);
+ bool XBeeLRSetJoinRX2Delay(XBee* self, const uint32_t value);
+ bool XBeeLRSetRX1Delay(XBee* self, const uint32_t value);
+ bool XBeeLRSetRX2Delay(XBee* self, const uint32_t value);
+ bool XBeeLRSetRX2DataRate(XBee* self, const uint8_t value);
+ bool XBeeLRSetRX2Frequency(XBee* self, const uint32_t value);
+ bool XBeeLRSetTransmitPower(XBee* self, const uint8_t value);
+ bool XBeeLRSetChannelsMask(XBee* self, const char* value);
+ 
+ #if defined(__cplusplus)
+ }
+ #endif
+ 
+ #endif // XBEELR_H
