@@ -7,7 +7,7 @@
  * operations unique to the XBee LR subclass.
  * 
  * @version 1.1
- * @date 2025-03-05
+ * @date 2025-04-04
  * 
  * @license MIT
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -887,3 +887,4 @@
  void XBeeLRDestroy(XBeeLR* self) {
      free(self);
  }
+

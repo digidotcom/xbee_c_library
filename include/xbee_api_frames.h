@@ -8,8 +8,8 @@
  * This file includes prototypes for functions that manage the construction, validation,
  * and interpretation of these frames.
  * 
- * @version 1.0
- * @date 2024-08-08
+ * @version 1.1
+ * @date 2025-04-04
  * 
  * @license MIT
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -321,3 +321,4 @@
  #endif
  
  #endif // XBEE_FRAMES_H
+

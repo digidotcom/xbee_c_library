@@ -7,8 +7,8 @@
  * communication features specific to XBee LR modules. It includes prototypes
  * for initialization, connection handling, and other LR-specific operations.
  * 
- * @version 1.0
- * @date 2024-08-08
+ * @version 1.1
+ * @date 2024-04-04
  * 
  * @license MIT
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +32,6 @@
  * @author Felix Galindo
  * @contact felix.galindo@digi.com
  */
-
 
  #ifndef XBEELR_H
  #define XBEELR_H

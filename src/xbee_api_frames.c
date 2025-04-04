@@ -6,8 +6,8 @@
  * and handle API frames for XBee communication. API frames are the primary 
  * method for structured data exchange with XBee modules.
  * 
- * @version 1.0
- * @date 2024-08-08
+ * @version 1.1
+ * @date 2025-04-04
  * 
  * @license MIT
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -507,3 +507,4 @@
  
      return asciiLen / 2;
  }
+
