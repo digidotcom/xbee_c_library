@@ -125,7 +125,7 @@ int main() {
     XBeeLR * myXbeeLr = XBeeLRCreate(&XBeeLRCTable,&XBeeLRHTable);
 
     //Init XBee
-    if(!XBeeInit((XBee*)myXbeeLr,B9600, "/dev/cu.usbserial-1120")){
+    if(!XBeeInit((XBee*)myXbeeLr,B9600, "/dev/cu.usbserial-1110")){
         portDebugPrintf("Failed to initialize XBee\n");
     }
 
@@ -136,9 +136,10 @@ int main() {
 
      //Set LoRaWAN Network Settings
     portDebugPrintf("Configuring...\n");
-    XBeeLRSetAppEUI((XBee*)myXbeeLr, "37D56A3F6CDCF0A5");
+    XBeeLRSetAppEUI((XBee*)myXbeeLr, "9E1177BD6B1DF41E");
     XBeeLRSetAppKey((XBee*)myXbeeLr, "CD32AAB41C54175E9060D86F3A8B7F48");
     XBeeLRSetNwkKey((XBee*)myXbeeLr, "CD32AAB41C54175E9060D86F3A8B7F48");
+    XBeeLRSetRegion((XBee*)myXbeeLr, 8);
     XBeeLRSetClass((XBee*)myXbeeLr, 'C');
     XBeeSetAPIOptions((XBee*)myXbeeLr, 0x01);
     XBeeWriteConfig((XBee*)myXbeeLr);
@@ -146,7 +147,8 @@ int main() {
 
     //Connect to LoRaWAN network
     portDebugPrintf("Connecting...\n");
-    XBeeConnect((XBee*)myXbeeLr);
+    bool connected = false;
+    if(XBeeConnect((XBee*)myXbeeLr)){connected = true;}
 
     // XBeeLR payload to send
     uint8_t examplePayload[] = {0xC0, 0xC0, 0xC0, 0xFF, 0xEE};
@@ -162,6 +164,8 @@ int main() {
     time_t startTime, currentTime;
     time(&startTime);
 
+
+
    while (1) {
         //Let XBee class process any serial data
         XBeeProcess((XBee*)myXbeeLr);
@@ -172,7 +176,7 @@ int main() {
         // Check if 10 seconds have passed
         if (difftime(currentTime, startTime) >= 10) {
             //Send data if connected, else connect
-            if(XBeeConnected((XBee*)myXbeeLr)){
+            if(connected){
                 portDebugPrintf("Sending 0x");
                 for (int i = 0; i < payloadLen; i++) {
                     portDebugPrintf("%02X", examplePayload[i]);
@@ -192,6 +196,7 @@ int main() {
                 if (!XBeeConnect((XBee*)myXbeeLr)) {
                     printf("Failed to connect.\n");
                 } else {
+                    connected = true;
                     printf("Connected!\n");
                 }
             }
