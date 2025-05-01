@@ -6,8 +6,8 @@
  * It includes methods for initializing, sending join requests, and handling other
  * operations unique to the XBee LR subclass.
  * 
- * @version 1.1
- * @date 2025-04-04
+ * @version 1.2
+ * @date 2025-05-01
  * 
  * @license MIT
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -292,7 +292,7 @@
      uint8_t param[16];
      
      if (!value || strlen(value) != 32) {
-         XBEEDebugPrint("Invalid App Key length\n");
+         XBEEDebugPrint("Invalid App Key length %d\n", strlen(value));
          return false;
      }
      
@@ -329,7 +329,7 @@
      uint8_t param[16];
      
      if (!value || strlen(value) != 32) {
-         XBEEDebugPrint("Invalid Nwk Key length\n");
+         XBEEDebugPrint("Invalid Nwk Key length %d\n", strlen(value));
          return false;
      }
      
@@ -366,8 +366,9 @@
      int status = apiSendAtCommandAndGetResponse(self, AT_LC, (const uint8_t *) &value, 1, response, &responseLength, 5000);
      if(status != API_SEND_SUCCESS){
          XBEEDebugPrint("Failed to set Class\n");
+         return false;
      }
-     return status;
+     return true;
  }
  
  /**
@@ -887,4 +888,4 @@
  void XBeeLRDestroy(XBeeLR* self) {
      free(self);
  }
-
+ 
