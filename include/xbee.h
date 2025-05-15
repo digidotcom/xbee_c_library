@@ -71,6 +71,7 @@ typedef struct {
     bool (*connected)(XBee* self);
     void (*handleRxPacketFrame)(XBee* self, void *frame);
     void (*handleTransmitStatusFrame)(XBee* self, void *frame);
+    bool (*configure)(XBee* self, const void* config);
 } XBeeVTable;
 
 

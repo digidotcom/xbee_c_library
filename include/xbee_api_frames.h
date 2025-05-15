@@ -205,7 +205,9 @@
      XBEE_API_TYPE_MODEM_STATUS = 0x8A,             ///< Frame for modem status reports
      XBEE_API_TYPE_AT_RESPONSE = 0x88,              ///< Frame for receiving AT command responses
      XBEE_API_TYPE_TX_STATUS = 0x89,                ///< Frame for delivery status reports
- 
+    
+     //@todo: Move XBee specific API frames to their respective modules
+     
      /**< XBee LR Specific API Frames */
      XBEE_API_TYPE_LR_JOIN_REQUEST = 0x14,          ///< Frame for LoRaWAN join requests
      XBEE_API_TYPE_LR_TX_REQUEST = 0x50,            ///< Frame for transmitting data in LoRaWAN

@@ -229,3 +229,21 @@ bool XBeeSetAPIOptions(XBee* self, const uint8_t value) {
     return true;
 }
 
+/**
+ * @brief Configures the XBee module with protocol-specific parameters.
+ * 
+ * This function delegates configuration to the subclass via the virtual table.
+ * It is optional and can be NULL if not needed by the specific module.
+ * 
+ * @param[in] self Pointer to the XBee instance.
+ * @param[in] config Pointer to protocol-specific configuration structure.
+ * 
+ * @return bool Returns true if configuration was accepted, false if unsupported or failed.
+ */
+bool XBeeConfigure(XBee* self, const void* config) {
+    if (self->vtable->configure) {
+        return self->vtable->configure(self, config);
+    }
+    XBEEDebugPrint("Configure() not supported for this module.\n");
+    return false;
+}

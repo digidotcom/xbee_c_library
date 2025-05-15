@@ -1,5 +1,5 @@
 /**
- * @file example.c
+ * @file xbee_lr_example.c
  * @brief Example application demonstrating the use of the XBee library on Unix.
  * 
  * This file contains a sample application that demonstrates how to use the XBee library 
