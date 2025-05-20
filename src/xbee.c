@@ -247,3 +247,30 @@ bool XBeeConfigure(XBee* self, const void* config) {
     XBEEDebugPrint("Configure() not supported for this module.\n");
     return false;
 }
+
+/**
+ * @brief Retrieves the firmware version of the XBee module using the ATVR command.
+ * 
+ * This function sends the AT_VR command and returns the firmware version as a 32-bit integer.
+ * It assumes the version is returned as a 4-byte value.
+ * 
+ * @param[in] self Pointer to the XBee instance.
+ * @param[out] version Pointer to store the retrieved 32-bit firmware version.
+ * 
+ * @return bool Returns true if the firmware version was retrieved successfully.
+ */
+bool XBeeGetFirmwareVersion(XBee* self, uint32_t* version) {
+    if (!version) return false;
+
+    uint8_t response[4];
+    uint8_t responseLength = 0;
+    int status = apiSendAtCommandAndGetResponse(self, AT_VR, NULL, 0, response, &responseLength, 5000);
+
+    if (status != API_SEND_SUCCESS || responseLength != 4) {
+        XBEEDebugPrint("Failed to retrieve firmware version (ATVR)\n");
+        return false;
+    }
+
+    *version = (response[0] << 24) | (response[1] << 16) | (response[2] << 8) | response[3];
+    return true;
+}

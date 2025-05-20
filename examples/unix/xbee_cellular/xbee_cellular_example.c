@@ -87,6 +87,7 @@ int main() {
 
     // Create instance
     XBeeCellular* xbee = XBeeCellularCreate(&cb, &hw);
+    
 
     // Set configuration for APN, SIM PIN, and optional carrier
     XBeeCellularConfig_t cfg = {
@@ -97,45 +98,52 @@ int main() {
     XBeeConfigure(xbee, &cfg);
 
     // Initialize serial interface
-    if (!XBeeInit((XBee*)xbee, 9600, "/dev/ttyUSB0")) {
+    if (!XBeeInit((XBee*)xbee, 9600, "/dev/cu.usbserial-1120")) {
         portDebugPrintf("[ERR] Failed to initialize XBee UART\n");
         return -1;
     }
 
-    // Attempt cellular network attach
-    if (!XBeeConnect((XBee*)xbee)) {
-        portDebugPrintf("[ERR] Cellular registration failed\n");
-        return -1;
+
+    uint16_t fwVersion;
+    if (XBeeGetFirmwareVersion(xbee, &fwVersion)) {
+        portDebugPrintf("Firmware Version: 0x%04X\n", fwVersion);
     }
 
-    // Construct UDP IPv4 data packet
-    XBeeCellularPacket_t packet = {
-        .protocol = 0x02, // UDP
-        .port = 5000,
-        .ip = {192, 168, 1, 100},
-        .payload = (const uint8_t*)"XBeeCellular",
-        .payloadSize = strlen("XBeeCellular")
-    };
 
-    // Loop to send every 10 seconds
-    time_t lastSent, now;
-    time(&lastSent);
+    // // Attempt cellular network attach
+    // if (!XBeeConnect((XBee*)xbee)) {
+    //     portDebugPrintf("[ERR] Cellular registration failed\n");
+    //     return -1;
+    // }
 
-    while (1) {
-        XBeeProcess((XBee*)xbee);
-        time(&now);
+    // // Construct UDP IPv4 data packet
+    // XBeeCellularPacket_t packet = {
+    //     .protocol = 0x02, // UDP
+    //     .port = 5000,
+    //     .ip = {192, 168, 1, 100},
+    //     .payload = (const uint8_t*)"XBeeCellular",
+    //     .payloadSize = strlen("XBeeCellular")
+    // };
 
-        if (difftime(now, lastSent) >= 10) {
-            portDebugPrintf("Sending IPv4 Packet\n");
-            if (XBeeSendData((XBee*)xbee, &packet) != 0x00) {
-                portDebugPrintf("[ERR] Send failed\n");
-            } else {
-                portDebugPrintf("[OK] Packet sent successfully\n");
-            }
-            time(&lastSent);
-        }
-        sleep(1);
-    }
+    // // Loop to send every 10 seconds
+    // time_t lastSent, now;
+    // time(&lastSent);
+
+    // while (1) {
+    //     XBeeProcess((XBee*)xbee);
+    //     time(&now);
+
+    //     if (difftime(now, lastSent) >= 10) {
+    //         portDebugPrintf("Sending IPv4 Packet\n");
+    //         if (XBeeSendData((XBee*)xbee, &packet) != 0x00) {
+    //             portDebugPrintf("[ERR] Send failed\n");
+    //         } else {
+    //             portDebugPrintf("[OK] Packet sent successfully\n");
+    //         }
+    //         time(&lastSent);
+    //     }
+    //     sleep(1);
+    // }
 
     return 0;
 }
