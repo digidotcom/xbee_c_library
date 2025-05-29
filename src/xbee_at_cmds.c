@@ -132,7 +132,11 @@
          case AT_UK: return "UK";            ///< Unlock Password
          case AT_VE: return "VE";            ///< Voltage Supply
          case AT_VL: return "VL";            ///< Cellular Module Version
- 
+         case AT_PN: return "PN";     ///< SIM PIN
+         case AT_AN: return "AN";     ///< APN
+         case AT_CP: return "CP";     ///< Carrier Profile
+         case AT_SD: return "SD";     ///< Shutdown
+        
          /**< XBee LR Specific AT Commands */
          case AT_DE: return "DE";            ///< LoRaWAN Device EUI
          case AT_AK: return "AK";            ///< LoRaWAN Application Key

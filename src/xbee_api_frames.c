@@ -285,6 +285,7 @@
      uint16_t length = (length_bytes[0] << 8) | length_bytes[1];
      APIFrameDebugPrint("Frame length received: %d bytes\n", length);
  
+     //@todo: Dynamic size based on api frame length
      if (length > XBEE_MAX_FRAME_DATA_SIZE) {
          APIFrameDebugPrint("Error: Frame length exceeds buffer size.\n");
          return API_RECEIVE_ERROR_FRAME_TOO_LARGE;
@@ -357,6 +358,7 @@
              break;
          case XBEE_API_TYPE_LR_RX_PACKET:
          case XBEE_API_TYPE_LR_EXPLICIT_RX_PACKET:
+         case XBEE_API_TYPE_CELLULAR_SOCKET_RX:
              if(self->vtable->handleRxPacketFrame){
                  self->vtable->handleRxPacketFrame(self, &frame);
              }
@@ -397,6 +399,12 @@
      // Wait and receive the response within the timeout period
      xbee_api_frame_t frame;
      int status;
+
+    const char* cmdStr = atCommandToString(command);
+     if (!cmdStr || strlen(cmdStr) != 2) {
+         APIFrameDebugPrint("Invalid AT command enum.\n");
+         return API_SEND_ERROR_INVALID_COMMAND;
+     }
  
      while (1) {
          // Attempt to receive the API frame
@@ -406,7 +414,14 @@
          if (status == 0) {
              // Check if the received frame is an AT response
              if (frame.type == XBEE_API_TYPE_AT_RESPONSE) {
- 
+                
+                // Verify response matches the requested AT command
+                 if (frame.data[2] != cmdStr[0] || frame.data[3] != cmdStr[1]) {
+                     APIFrameDebugPrint("Mismatched AT command response: expected %s, got %c%c\n",
+                         cmdStr, frame.data[2], frame.data[3]);
+                     continue; // Keep waiting
+                 }
+
                  // Extract the AT command response
                  *responseLength = frame.length - 5;  // Subtract the frame ID and AT command bytes
                  APIFrameDebugPrint("responseLength: %u\n", *responseLength);

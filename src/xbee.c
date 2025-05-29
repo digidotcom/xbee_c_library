@@ -64,9 +64,10 @@ bool XBeeInit(XBee* self, uint32_t baudRate, void* device) {
  * @param[in] self Pointer to the XBee instance.
  * 
  * @return True if the connection is successful, otherwise false.
+ * @todo Add support for non-blocking connection attempts.
  */
-bool XBeeConnect(XBee* self) {
-    return self->vtable->connect(self);
+bool XBeeConnect(XBee* self, bool blocking) {
+    return self->vtable->connect(self, blocking);
 }
 
 /**
