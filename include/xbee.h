@@ -143,6 +143,7 @@ bool XBeeWriteConfig(XBee* self);
 bool XBeeApplyChanges(XBee* self);
 bool XBeeSetAPIOptions(XBee* self, const uint8_t value);
 bool XBeeGetFirmwareVersion(XBee* self, uint32_t* version);
+bool XBeeConfigure(XBee* self, const void* config);
 
 #if defined(__cplusplus)
 }

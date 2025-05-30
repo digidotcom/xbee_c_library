@@ -15,7 +15,19 @@
     - src         
   :test:
     - test
+  :mockable:
+    - include
 
 :plugins:
   :enabled:
-    - report_tests_pretty_stdout
+    - stdout_pretty_tests_report
+
+:cmock:
+  :mock_prefix: mock_
+  :treat_inlines: :include
+  :when_no_prototypes: :warn
+  :plugins:
+    - expect
+    - ignore
+    - expect_any_args
+  :mock_path: build/test/mocks

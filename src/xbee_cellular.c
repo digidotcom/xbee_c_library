@@ -200,7 +200,7 @@ void XBeeCellularProcess(XBee* self) {
  *
  * @return bool Returns true if configuration was applied successfully, otherwise false.
  */
-static bool XBeeCellularConfigure(XBee* self, const void* config) {
+bool XBeeCellularConfigure(XBee* self, const void* config) {
     if (!self || !config) return false;
 
     XBeeCellular* cell = (XBeeCellular*)self;

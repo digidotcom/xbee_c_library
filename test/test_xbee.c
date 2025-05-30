@@ -1,5 +1,8 @@
 #include "unity.h"
 #include "xbee.h"
+#include "xbee.h"
+#include "xbee_api_frames.h" 
+#include "xbee_at_cmds.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -18,7 +21,17 @@ static bool mockConfigureCalled = false;
 
 // ----------------------------
 // Mock Implementations
-// ----------------------------
+// ---------------------------- 
+
+uint32_t portMillis(void) {
+    static uint32_t fakeTime = 0;
+    return fakeTime += 100;
+}
+
+void portDelay(uint32_t ms) {
+    (void)ms;
+}
+
 static bool MockInit(XBee* self, uint32_t baudRate, void* device) {
     mockInitCalled = true;
     return baudRate == 9600 && device == NULL;
@@ -153,16 +166,29 @@ void test_XBeeConfigure_ShouldReturnTrue_WhenSupported(void) {
 }
 
 void test_XBeeConfigure_ShouldReturnFalse_WhenNotSupported(void) {
-    xbee.vtable->configure = NULL;
+    // Copy vtable to a mutable version
+    XBeeVTable mutableVTable = *xbee.vtable;
+    mutableVTable.configure = NULL;
+    xbee.vtable = &mutableVTable;
+
     TEST_ASSERT_FALSE(XBeeConfigure(&xbee, NULL));
 }
 
 // ----------------------------
-// Main Runner (if needed)
+// Main Runner (optional)
 // ----------------------------
 // int main(void) {
 //     UNITY_BEGIN();
 //     RUN_TEST(test_XBeeInit_ShouldCallInitAndSetFrameId);
-//     // Add other RUN_TEST() calls here
+//     RUN_TEST(test_XBeeConnect_ShouldCallConnectWithBlockingTrue);
+//     RUN_TEST(test_XBeeConnect_ShouldCallConnectWithBlockingFalse);
+//     RUN_TEST(test_XBeeDisconnect_ShouldReturnTrueAndCallDisconnect);
+//     RUN_TEST(test_XBeeSendData_ShouldReturnSuccessStatus);
+//     RUN_TEST(test_XBeeSoftReset_ShouldReturnTrue);
+//     RUN_TEST(test_XBeeHardReset_ShouldCallMockHardReset);
+//     RUN_TEST(test_XBeeProcess_ShouldCallProcess);
+//     RUN_TEST(test_XBeeConnected_ShouldReturnTrue);
+//     RUN_TEST(test_XBeeConfigure_ShouldReturnTrue_WhenSupported);
+//     RUN_TEST(test_XBeeConfigure_ShouldReturnFalse_WhenNotSupported);
 //     return UNITY_END();
 // }

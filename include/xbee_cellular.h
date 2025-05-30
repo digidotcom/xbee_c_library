@@ -104,7 +104,7 @@ typedef struct {
 /**
  * @brief Applies the given APN/SIM/carrier configuration to a cellular instance.
  */
-void XBeeConfigure(XBeeCellular* self, const XBeeCellularConfig_t* config);
+bool XBeeCellularConfigure(XBee* self, const void* config);
 
 /**
  * @brief Initializes the UART interface for the module.
