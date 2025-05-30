@@ -1,7 +1,7 @@
----
 :project:
   :name: xbee_project
   :test_file_prefix: test_
+  :build_root: build    
   :source:
     - src
   :test:
