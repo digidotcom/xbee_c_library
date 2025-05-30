@@ -1,0 +1,38 @@
+# .github/workflows/doxygen.yml
+name: Doxygen Docs
+
+# ➊ Every push, every branch – plus PRs for lint/warning checks
+on:
+  push:
+    branches: [ "**" ]     # match _everything_
+  pull_request:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Doxygen + Graphviz
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+
+      - name: Generate docs
+        run: doxygen Doxyfile      # assumes OUTPUT_DIRECTORY=docs
+
+      # ➋ Upload as an artifact (handy for PR review, no deploy needed)
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: doxygen-${{ github.ref_name }}
+          path: docs/html
+
+      # ➌ Deploy **every branch** to gh-pages/branch-name/
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: docs/html
+          destination_dir: ${{ github.ref_name }}
