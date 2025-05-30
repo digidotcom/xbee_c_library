@@ -322,7 +322,7 @@
  int apiSendAtCommand(XBee* self,at_command_t command, const uint8_t *parameter, uint8_t paramLength);
  int apiSendFrame(XBee* self,uint8_t frame_type, const uint8_t *data, uint16_t len);
  int apiSendAtCommandAndGetResponse(XBee* self, at_command_t command, const uint8_t *parameter, 
-     uint8_t paramLength, uint8_t *responseBuffer, uint8_t *responseLength, uint32_t timeoutMs);
+     uint8_t paramLength, uint8_t *responseBuffer, uint8_t *responseLength, uint32_t timeoutMs, uint16_t responseBufferSize);
  void apiHandleFrame(XBee* self,xbee_api_frame_t frame);
  void xbeeHandleAtResponse(XBee* self,xbee_api_frame_t *frame);
  void xbeeHandleModemStatus(XBee* self,xbee_api_frame_t *frame);

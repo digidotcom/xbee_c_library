@@ -67,7 +67,7 @@ bool XBeeCellularInit(XBee* self, uint32_t baudRate, void* device) {
 bool XBeeCellularConnected(XBee* self) {
     uint8_t response = 0;
     uint8_t responseLength;
-    int status = apiSendAtCommandAndGetResponse(self, AT_AI, NULL, 0, &response, &responseLength, 5000);
+    int status = apiSendAtCommandAndGetResponse(self, AT_AI, NULL, 0, &response, &responseLength, 5000, sizeof(response));
     return (status == API_SEND_SUCCESS && response == 0);
 }
 
@@ -171,7 +171,7 @@ bool XBeeCellularSoftReset(XBee* self) {
  * @param[in] self Pointer to the XBee instance.
  ******************************************************************************/
 void XBeeCellularHardReset(XBee* self) {
-    // Optional stub
+    (void) self;
 }
 
 /*****************************************************************************/
@@ -209,6 +209,75 @@ static bool XBeeCellularConfigure(XBee* self, const void* config) {
     // Save config to internal copy
     cell->config = *cfg;
     return true;
+}
+
+/*****************************************************************************/
+/**
+ * @brief Handles incoming Socket Receive (0xCD) frames from the XBee Cellular module.
+ *
+ * This function parses socket receive frames and extracts the payload and metadata.
+ * It provides detailed debug output and invokes the registered receive callback.
+ *
+ * @param[in] self Pointer to the XBee instance.
+ * @param[in] param Pointer to the received API frame data.
+ ******************************************************************************/
+static void XBeeCellularHandleRxPacket(XBee* self, void* param) {
+    if (!param) {
+        XBEEDebugPrint("HandleRxPacket: Null parameter received\n");
+        return;
+    }
+
+    xbee_api_frame_t* frame = (xbee_api_frame_t*)param;
+
+    if (frame->type != XBEE_API_TYPE_CELLULAR_SOCKET_RX) {
+        XBEEDebugPrint("HandleRxPacket: Unexpected frame type 0x%02X\n", frame->type);
+        return;
+    }
+
+    XBEEDebugPrint("HandleRxPacket: Frame Length: %u\n", frame->length);
+
+    if (frame->length < 3) {
+        XBEEDebugPrint("HandleRxPacket: Frame too short to be valid\n");
+        return;
+    }
+
+     #if XBEE_DEBUG_PRINT_ENABLED
+        uint8_t frameId  = frame->data[0];
+        uint8_t socketId = frame->data[1];
+        uint8_t status   = frame->data[2];
+    #endif
+    uint8_t* payload = &frame->data[3];
+    uint16_t payloadSize = frame->length - 3;
+
+    XBeeCellularPacket_t packet = {0};
+    packet.payload = payload;
+    packet.payloadSize = payloadSize;
+    packet.protocol = 0xFF;  // Not present in frame
+    packet.port = 0;         // Not present in frame
+
+    XBEEDebugPrint("HandleRxPacket: FrameID: 0x%02X, Socket ID: %u, Status: 0x%02X\n",
+                   frameId, socketId, status);
+    XBEEDebugPrint("HandleRxPacket: Payload size: %u bytes\n", payloadSize);
+
+    XBEEDebugPrint("[Payload HEX Dump]:\n");
+    for (int i = 0; i < payloadSize && i < 64; ++i) {
+        XBEEDebugPrint("%02X ", payload[i]);
+    }
+    if (payloadSize > 64) XBEEDebugPrint("... [truncated]\n");
+    else XBEEDebugPrint("\n");
+
+    XBEEDebugPrint("[Payload ASCII Dump]:\n");
+    for (int i = 0; i < payloadSize && i < 64; ++i) {
+        #if XBEE_DEBUG_PRINT_ENABLED
+            char c = payload[i];
+        #endif
+        XBEEDebugPrint("%c", (c >= 32 && c <= 126) ? c : '.');
+    }
+    XBEEDebugPrint("\n");
+
+    if (self->ctable && self->ctable->OnReceiveCallback) {
+        self->ctable->OnReceiveCallback(self, &packet);
+    }
 }
 
 /*****************************************************************************/
@@ -465,71 +534,6 @@ bool XBeeCellularSocketSetOption(XBee* self, uint8_t socketId, uint8_t option, c
     return (apiSendFrame(self, XBEE_API_TYPE_CELLULAR_SOCKET_OPTION, frame, offset) == API_SEND_SUCCESS);
 }
 
-
-/*****************************************************************************/
-/**
- * @brief Handles incoming Socket Receive (0xCD) frames from the XBee Cellular module.
- *
- * This function parses socket receive frames and extracts the payload and metadata.
- * It provides detailed debug output and invokes the registered receive callback.
- *
- * @param[in] self Pointer to the XBee instance.
- * @param[in] param Pointer to the received API frame data.
- ******************************************************************************/
-static void XBeeCellularHandleRxPacket(XBee* self, void* param) {
-    if (!param) {
-        XBEEDebugPrint("HandleRxPacket: Null parameter received\n");
-        return;
-    }
-
-    xbee_api_frame_t* frame = (xbee_api_frame_t*)param;
-
-    if (frame->type != XBEE_API_TYPE_CELLULAR_SOCKET_RX) {
-        XBEEDebugPrint("HandleRxPacket: Unexpected frame type 0x%02X\n", frame->type);
-        return;
-    }
-
-    XBEEDebugPrint("HandleRxPacket: Frame Length: %u\n", frame->length);
-
-    if (frame->length < 3) {
-        XBEEDebugPrint("HandleRxPacket: Frame too short to be valid\n");
-        return;
-    }
-
-    uint8_t frameId  = frame->data[0];
-    uint8_t socketId = frame->data[1];
-    uint8_t status   = frame->data[2];
-    uint8_t* payload = &frame->data[3];
-    uint16_t payloadSize = frame->length - 3;
-
-    XBeeCellularPacket_t packet = {0};
-    packet.payload = payload;
-    packet.payloadSize = payloadSize;
-    packet.protocol = 0xFF;  // Not present in frame
-    packet.port = 0;         // Not present in frame
-
-    XBEEDebugPrint("HandleRxPacket: FrameID: 0x%02X, Socket ID: %u, Status: 0x%02X\n",
-                   frameId, socketId, status);
-    XBEEDebugPrint("HandleRxPacket: Payload size: %u bytes\n", payloadSize);
-
-    XBEEDebugPrint("[Payload HEX Dump]:\n");
-    for (int i = 0; i < payloadSize && i < 64; ++i) {
-        XBEEDebugPrint("%02X ", payload[i]);
-    }
-    if (payloadSize > 64) XBEEDebugPrint("... [truncated]\n");
-    else XBEEDebugPrint("\n");
-
-    XBEEDebugPrint("[Payload ASCII Dump]:\n");
-    for (int i = 0; i < payloadSize && i < 64; ++i) {
-        char c = payload[i];
-        XBEEDebugPrint("%c", (c >= 32 && c <= 126) ? c : '.');
-    }
-    XBEEDebugPrint("\n");
-
-    if (self->ctable && self->ctable->OnReceiveCallback) {
-        self->ctable->OnReceiveCallback(self, &packet);
-    }
-}
 
 /*****************************************************************************/
 /**

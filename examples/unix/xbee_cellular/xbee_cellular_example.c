@@ -49,22 +49,23 @@
  * @param[in] data Pointer to the received XBeeCellularPacket_t struct.
  */
 void OnReceiveCallback(XBee* self, void* data) {
+    (void)self;
     XBeeCellularPacket_t* packet = (XBeeCellularPacket_t*)data;
 
-    portDebugPrintf("\n[RX] Received %u bytes from %u.%u.%u.%u:\n",
-        packet->payloadSize, packet->ip[0], packet->ip[1], packet->ip[2], packet->ip[3]);
+    // portDebugPrintf("\n[RX] Received %u bytes from %u.%u.%u.%u:\n",
+    //     packet->payloadSize, packet->ip[0], packet->ip[1], packet->ip[2], packet->ip[3]);
 
-    // Full hex dump
-    portDebugPrintf("[Payload HEX Dump]:\n");
-    for (int i = 0; i < packet->payloadSize; i++) {
-        portDebugPrintf("%02X ", packet->payload[i]);
-        if ((i + 1) % 16 == 0) {
-            portDebugPrintf("\n");
-        }
-    }
-    if (packet->payloadSize % 16 != 0) {
-        portDebugPrintf("\n");
-    }
+    // // Full hex dump
+    // portDebugPrintf("[Payload HEX Dump]:\n");
+    // for (int i = 0; i < packet->payloadSize; i++) {
+    //     portDebugPrintf("%02X ", packet->payload[i]);
+    //     if ((i + 1) % 16 == 0) {
+    //         portDebugPrintf("\n");
+    //     }
+    // }
+    // if (packet->payloadSize % 16 != 0) {
+    //     portDebugPrintf("\n");
+    // }
 
     // Full ASCII dump
     portDebugPrintf("[Payload ASCII Dump]:\n");
@@ -91,6 +92,8 @@ void OnReceiveCallback(XBee* self, void* data) {
  */
 void OnSendCallback(XBee* self, void* data) {
     portDebugPrintf("[TX] Send callback invoked.\n");
+    (void) self;
+    (void) data;
 }
 
 /**

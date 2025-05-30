@@ -174,7 +174,7 @@ bool XBeeConnected(XBee* self) {
 bool XBeeWriteConfig(XBee* self) {
     uint8_t response[33];
     uint8_t responseLength;
-    int status = apiSendAtCommandAndGetResponse(self, AT_WR, NULL, 0, response, &responseLength, 5000);
+    int status = apiSendAtCommandAndGetResponse(self, AT_WR, NULL, 0, response, &responseLength, 5000, sizeof(response));
     if(status != API_SEND_SUCCESS){
         XBEEDebugPrint("Failed to Write Config\n");
         return false;
@@ -197,7 +197,7 @@ bool XBeeWriteConfig(XBee* self) {
 bool XBeeApplyChanges(XBee* self) {
     uint8_t response[33];
     uint8_t responseLength;
-    int status = apiSendAtCommandAndGetResponse(self, AT_AC, NULL, 0, response, &responseLength, 5000);
+    int status = apiSendAtCommandAndGetResponse(self, AT_AC, NULL, 0, response, &responseLength, 5000, sizeof(response));
     if(status != API_SEND_SUCCESS){
         XBEEDebugPrint("Failed to Apply Changes\n");
         return false;
@@ -222,7 +222,7 @@ bool XBeeApplyChanges(XBee* self) {
 bool XBeeSetAPIOptions(XBee* self, const uint8_t value) {
     uint8_t response[33];
     uint8_t responseLength;
-    int status = apiSendAtCommandAndGetResponse(self, AT_AO, (const uint8_t[]){value}, 1, response, &responseLength, 5000);
+    int status = apiSendAtCommandAndGetResponse(self, AT_AO, (const uint8_t[]){value}, 1, response, &responseLength, 5000, sizeof(response));
     if(status != API_SEND_SUCCESS){
         XBEEDebugPrint("Failed to set API Options\n");
         return false;
@@ -265,7 +265,7 @@ bool XBeeGetFirmwareVersion(XBee* self, uint32_t* version) {
 
     uint8_t response[4];
     uint8_t responseLength = 0;
-    int status = apiSendAtCommandAndGetResponse(self, AT_VR, NULL, 0, response, &responseLength, 5000);
+    int status = apiSendAtCommandAndGetResponse(self, AT_VR, NULL, 0, response, &responseLength, 5000, sizeof(response));
 
     if (status != API_SEND_SUCCESS || responseLength != 4) {
         XBEEDebugPrint("Failed to retrieve firmware version (ATVR)\n");

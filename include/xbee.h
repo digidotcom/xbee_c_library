@@ -62,7 +62,7 @@ typedef struct XBee XBee;
  */
 typedef struct {
     bool (*init)(XBee* self, uint32_t baudrate, void* device);
-    bool (*connect)(XBee* self);
+    bool (*connect)(XBee* self, bool blocking);
     bool (*disconnect)(XBee* self);
     uint8_t (*sendData)(XBee* self, const void* data);
     bool (*softReset)(XBee* self);
@@ -132,7 +132,7 @@ struct XBee {
 
 // Interface functions to call the methods
 bool XBeeInit(XBee* self, uint32_t baudrate, void* device);
-bool XBeeConnect(XBee* self);
+bool XBeeConnect(XBee* self, bool blocking);
 bool XBeeDisconnect(XBee* self);
 uint8_t XBeeSendData(XBee* self, const void*);
 bool XBeeSoftReset(XBee* self);

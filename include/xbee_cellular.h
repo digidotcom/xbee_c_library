@@ -176,7 +176,9 @@ bool XBeeCellularSocketSend(XBee* self, uint8_t socketId, const uint8_t* payload
  */
 bool XBeeCellularSocketSetOption(XBee* self, uint8_t socketId, uint8_t option, const uint8_t* value, uint8_t valueLen);
 
-static void XBeeCellularHandleRxPacket(XBee* self, void* param);
+/**
+ * @brief Closes the specified socket.
+ */
 bool XBeeCellularSocketClose(XBee* self, uint8_t socketId);
 
 #ifdef __cplusplus

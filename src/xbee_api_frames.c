@@ -384,12 +384,13 @@
   * @param[out] responseBuffer Pointer to a buffer where the AT command response will be stored.
   * @param[out] responseLength Pointer to a variable where the length of the response will be stored.
   * @param[in] timeoutMs The timeout period in milliseconds within which the response must be received.
+  * @param[in] responseBufferSize The maximum size of the response buffer.
   * 
   * @return int Returns 0 (`API_SEND_SUCCESS`) if the AT command is successfully sent and a valid response is received, 
   * or a non-zero error code if there is a failure (`API_SEND_AT_CMD_ERROR`, `API_SEND_AT_CMD_RESPONSE_TIMEOUT`, etc.).
   */
  int apiSendAtCommandAndGetResponse(XBee* self, at_command_t command, const uint8_t *parameter, uint8_t paramLength, uint8_t *responseBuffer, 
-     uint8_t *responseLength, uint32_t timeoutMs) {
+     uint8_t *responseLength, uint32_t timeoutMs, uint16_t responseBufferSize) {
      // Send the AT command using API frame
      apiSendAtCommand(self, command, (const uint8_t *)parameter, paramLength);
  
@@ -426,6 +427,11 @@
                  *responseLength = frame.length - 5;  // Subtract the frame ID and AT command bytes
                  APIFrameDebugPrint("responseLength: %u\n", *responseLength);
                  if(frame.data[4] == 0){
+                    if (*responseLength > responseBufferSize) {
+                        APIFrameDebugPrint("Response exceeds buffer size: %u > %u\n", *responseLength, responseBufferSize);
+                        return API_SEND_AT_CMD_ERROR;
+                    }
+
                      if((responseBuffer != NULL) && (*responseLength)){
                          memcpy(responseBuffer, &frame.data[5], *responseLength);
                      }
@@ -454,6 +460,7 @@
  
  //Print out AT Response
  void xbeeHandleAtResponse(XBee* self, xbee_api_frame_t *frame) {
+    (void)self;
  #if API_FRAME_DEBUG_PRINT_ENABLED
      // The first byte of frame->data is the Frame ID
      uint8_t frame_id = frame->data[1];
@@ -487,6 +494,7 @@
  
  //Should be moved to be handled by user?
  void xbeeHandleModemStatus(XBee* self, xbee_api_frame_t *frame) {
+     (void)self;
      if (frame->type != XBEE_API_TYPE_MODEM_STATUS) return;
  
      APIFrameDebugPrint("Modem Status: %d\n", frame->data[1]);

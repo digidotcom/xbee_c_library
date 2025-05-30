@@ -57,6 +57,7 @@
  * @return void This function does not return a value.
  */
 void OnReceiveCallback(XBee* self, void* data){
+    (void) self;
     XBeeLRPacket_t* packet = (XBeeLRPacket_t*) data;
     portDebugPrintf("Received Packet: ");
     for (int i = 0; i < packet->payloadSize; i++) {
@@ -84,6 +85,7 @@ void OnReceiveCallback(XBee* self, void* data){
  * @return void This function does not return a value.
  */
 void OnSendCallback(XBee* self, void* data){
+    (void) self;
     XBeeLRPacket_t* packet = (XBeeLRPacket_t*) data;
     switch(packet->status){
         case 0:
@@ -130,7 +132,7 @@ int main() {
     }
 
     //Read LoRaWAN DevEUI and print
-    uint8_t devEui[17];
+    char devEui[17];
     XBeeLRGetDevEUI((XBee*)myXbeeLr, devEui, sizeof(devEui));
     portDebugPrintf("DEVEUI: %s\n", devEui);
 
@@ -148,7 +150,7 @@ int main() {
     //Connect to LoRaWAN network
     portDebugPrintf("Connecting...\n");
     bool connected = false;
-    if(XBeeConnect((XBee*)myXbeeLr)){connected = true;}
+    if(XBeeConnect((XBee*)myXbeeLr,true)){connected = true;}
 
     // XBeeLR payload to send
     uint8_t examplePayload[] = {0xC0, 0xC0, 0xC0, 0xFF, 0xEE};
@@ -163,8 +165,6 @@ int main() {
     //To keep track of time
     time_t startTime, currentTime;
     time(&startTime);
-
-
 
    while (1) {
         //Let XBee class process any serial data
@@ -193,7 +193,7 @@ int main() {
             }
             else{
                 portDebugPrintf("Not connected. Connecting...\n");
-                if (!XBeeConnect((XBee*)myXbeeLr)) {
+                if (!XBeeConnect((XBee*)myXbeeLr, true)) {
                     printf("Failed to connect.\n");
                 } else {
                     connected = true;
