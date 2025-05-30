@@ -17,4 +17,4 @@
 
 :plugins:
   :enabled:
-    - stdout_pretty_tests_report
+    - report_tests_pretty_stdout
