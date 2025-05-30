@@ -11,7 +11,7 @@ static int mock_uart_write(const uint8_t *data, uint16_t len) {
     return len;
 }
 
-static int mock_uart_read(uint8_t *buffer, uint16_t len) {
+static int mock_uart_read_valid(uint8_t *buffer, uint16_t len) {
     static const uint8_t fake_response[] = {
         0x7E,        // Start delimiter
         0x00, 0x07,  // Length = 7
@@ -35,6 +35,37 @@ static int mock_uart_read(uint8_t *buffer, uint16_t len) {
     return bytes_to_copy;
 }
 
+static int mock_uart_read_bad_start(uint8_t *buffer, uint16_t len) {
+    static const uint8_t bad[] = { 0x00 }; // Not 0x7E
+    memcpy(buffer, bad, 1);
+    return 1;
+}
+
+static int mock_uart_read_incomplete(uint8_t *buffer, uint16_t len) {
+    static const uint8_t incomplete[] = {
+        0x7E, 0x00, 0x05, 0x88, 0x01, 'V'  // Only part of a frame
+    };
+    static size_t offset = 0;
+
+    if (offset >= sizeof(incomplete)) return 0;
+    size_t copy_len = (offset + len > sizeof(incomplete)) ? sizeof(incomplete) - offset : len;
+    memcpy(buffer, &incomplete[offset], copy_len);
+    offset += copy_len;
+    return copy_len;
+}
+
+static int mock_uart_read_bad_checksum(uint8_t *buffer, uint16_t len) {
+    static const uint8_t frame[] = {
+        0x7E, 0x00, 0x05, 0x88, 0x01, 'V', 'R', 0x00, 0x99  // Bad checksum
+    };
+    static size_t offset = 0;
+    if (offset >= sizeof(frame)) return 0;
+    size_t to_copy = (offset + len > sizeof(frame)) ? sizeof(frame) - offset : len;
+    memcpy(buffer, &frame[offset], to_copy);
+    offset += to_copy;
+    return to_copy;
+}
+
 static uint32_t mock_millis(void) {
     static uint32_t t = 0;
     t += 10;
@@ -50,7 +81,7 @@ static void mock_delay(uint32_t ms) {
 static XBeeHTable mock_hTable = {
     .PortUartInit  = NULL,
     .PortUartWrite = mock_uart_write,
-    .PortUartRead  = mock_uart_read,
+    .PortUartRead  = mock_uart_read_valid,
     .PortMillis    = mock_millis,
     .PortDelay     = mock_delay,
 };
@@ -64,6 +95,7 @@ static XBee mock_xbee = {
 
 void setUp(void) {
     mock_xbee.frameIdCntr = 1;
+    mock_hTable.PortUartRead = mock_uart_read_valid;
 }
 
 void tearDown(void) {}
@@ -84,7 +116,6 @@ void test_asciiToHexArray_invalid_length(void) {
     const char *ascii = "123";
     uint8_t output[2];
     int len = asciiToHexArray(ascii, output, 2);
-
     TEST_ASSERT_EQUAL_INT(-1, len);
 }
 
@@ -107,7 +138,7 @@ void test_apiSendFrame_valid(void) {
 void test_apiReceiveApiFrame_basic_parse(void) {
     xbee_api_frame_t frame = {0};
     int status = apiReceiveApiFrame(&mock_xbee, &frame);
-    TEST_ASSERT_EQUAL_INT(API_RECEIVE_ERROR_TIMEOUT_START_DELIMITER, status); // since mock doesn't actually restart properly
+    TEST_ASSERT_EQUAL_INT(API_RECEIVE_SUCCESS, status);
 }
 
 void test_apiSendAtCommandAndGetResponse_simulated(void) {
@@ -115,7 +146,6 @@ void test_apiSendAtCommandAndGetResponse_simulated(void) {
     uint8_t responseLength = 0;
     int status = apiSendAtCommandAndGetResponse(&mock_xbee, AT_VR, NULL, 0,
                                                 response, &responseLength, 5000, sizeof(response));
-
     TEST_ASSERT_EQUAL(API_SEND_SUCCESS, status);
 }
 
@@ -146,11 +176,32 @@ void test_apiHandleFrame_calls_correct_handler(void) {
     apiHandleFrame(&mock_xbee, frame);
 }
 
-// ==== MAIN RUNNER ====
+// ==== Additional Tests for Malformed Frames ====
 
+void test_apiReceiveApiFrame_invalid_start_delimiter(void) {
+    mock_hTable.PortUartRead = mock_uart_read_bad_start;
+    xbee_api_frame_t frame;
+    int status = apiReceiveApiFrame(&mock_xbee, &frame);
+    TEST_ASSERT_EQUAL_INT(API_RECEIVE_ERROR_INVALID_START_DELIMITER, status);
+}
+
+void test_apiReceiveApiFrame_incomplete_frame(void) {
+    mock_hTable.PortUartRead = mock_uart_read_incomplete;
+    xbee_api_frame_t frame;
+    int status = apiReceiveApiFrame(&mock_xbee, &frame);
+    TEST_ASSERT_EQUAL_INT(API_RECEIVE_ERROR_TIMEOUT_DATA, status);
+}
+
+void test_apiReceiveApiFrame_bad_checksum(void) {
+    mock_hTable.PortUartRead = mock_uart_read_bad_checksum;
+    xbee_api_frame_t frame;
+    int status = apiReceiveApiFrame(&mock_xbee, &frame);
+    TEST_ASSERT_EQUAL_INT(API_RECEIVE_ERROR_INVALID_CHECKSUM, status);
+}
+
+// ==== MAIN RUNNER (Uncomment to run standalone) ====
 // int main(void) {
 //     UNITY_BEGIN();
-
 //     RUN_TEST(test_asciiToHexArray_valid_input);
 //     RUN_TEST(test_asciiToHexArray_invalid_length);
 //     RUN_TEST(test_apiSendAtCommand_valid);
@@ -161,6 +212,8 @@ void test_apiHandleFrame_calls_correct_handler(void) {
 //     RUN_TEST(test_xbeeHandleAtResponse_should_print);
 //     RUN_TEST(test_xbeeHandleModemStatus_should_print);
 //     RUN_TEST(test_apiHandleFrame_calls_correct_handler);
-
+//     RUN_TEST(test_apiReceiveApiFrame_invalid_start_delimiter);
+//     RUN_TEST(test_apiReceiveApiFrame_incomplete_frame);
+//     RUN_TEST(test_apiReceiveApiFrame_bad_checksum);
 //     return UNITY_END();
 // }

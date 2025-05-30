@@ -11,7 +11,8 @@
   :source:
     - src
   :include:
-    - src
+    - include     
+    - src         
   :test:
     - test
 
