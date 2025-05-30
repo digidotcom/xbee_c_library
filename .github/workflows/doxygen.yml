@@ -1,62 +1,66 @@
 # .github/workflows/doxygen.yml
 name: Doxygen Docs
 
-# ────────────────────────────────
-# Run on every push + every PR
-# ────────────────────────────────
+# ➊ Build docs for every push (any branch) and on each PR
 on:
   push:
-    branches: ["**"]          # all branches
-  pull_request:               # PRs from forks included
+    branches: [ "**" ]      # match *all* branch names
+  pull_request:
 
 jobs:
   docs:
     runs-on: ubuntu-latest
 
     steps:
-    # ────────────────────────────────
-    # 1. Checkout code
-    # ────────────────────────────────
-    - uses: actions/checkout@v4
+      # ------------------------------------------------------------------
+      # Checkout repository
+      # ------------------------------------------------------------------
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-    # ────────────────────────────────
-    # 2. Install Doxygen tool-chain
-    # ────────────────────────────────
-    - name: Install Doxygen & Graphviz
-      run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+      # ------------------------------------------------------------------
+      # ➋ Create a file-system-safe slug from the ref name
+      #    (slashes → dashes, everything else unchanged)
+      # ------------------------------------------------------------------
+      - name: Prepare ref slug
+        id: slug
+        run: |
+          echo "SLUG=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
 
-    # ────────────────────────────────
-    # 3. Build docs    (OUTPUT_DIRECTORY = docs )
-    # ────────────────────────────────
-    - name: Generate documentation
-      run: doxygen Doxyfile
+      # ------------------------------------------------------------------
+      # Install Doxygen + Graphviz
+      # ------------------------------------------------------------------
+      - name: Install Doxygen & Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
 
-    # ────────────────────────────────
-    # 4. Upload artifact (easy download
-    #    from PR overview)
-    # ────────────────────────────────
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: docs-${{ github.ref_name }}
-        path: docs/html
-        retention-days: 7
+      # ------------------------------------------------------------------
+      # Generate documentation
+      # Assumes your Doxyfile writes HTML to docs/html
+      # ------------------------------------------------------------------
+      - name: Generate docs
+        run: doxygen Doxyfile
 
-    # ────────────────────────────────
-    # 5. Publish to gh-pages
-    #
-    #    • one sub-folder per branch
-    #        main   ➜ /
-    #        develop➜ /develop/
-    #        feat/x ➜ /feat-x/
-    #
-    # ────────────────────────────────
-    - name: Deploy to gh-pages
-      if: github.event_name == 'push'       # don’t deploy from PRs
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: gh-pages            # branch will be created automatically
-        publish_dir: docs/html
-        destination_dir: |
-          ${{ github.ref_name == 'main' && '' || github.ref_name }}
+      # ------------------------------------------------------------------
+      # ➌ Upload HTML as a run artifact (handy for PR review)
+      # ------------------------------------------------------------------
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # e.g. doxygen-feature-xbee-cellular-3
+          name: doxygen-${{ steps.slug.outputs.SLUG }}
+          path: docs/html
+
+      # ------------------------------------------------------------------
+      # ➍ Deploy every branch to GitHub Pages under its own folder
+      #     gh-pages/<branch-or-tag-slug>/
+      # ------------------------------------------------------------------
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: docs/html
+          # Folder on gh-pages: one per branch, with slashes removed
+          destination_dir: ${{ steps.slug.outputs.SLUG }}
