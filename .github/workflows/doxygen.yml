@@ -1,66 +1,42 @@
-# .github/workflows/doxygen.yml
-name: Doxygen Docs
+name: Doxygen Pages
 
-# ➊ Build docs for every push (any branch) and on each PR
 on:
-  push:
-    branches: [ "**" ]      # match *all* branch names
-  pull_request:
+  push:            # run on every push (all branches)
+    branches: ["**"]
+  pull_request:    # optional – still produces the artifact
+
+permissions:
+  contents: read
+  pages: write     # allow the deploy-pages action to publish
+  id-token: write  # required by deploy-pages
 
 jobs:
   docs:
     runs-on: ubuntu-latest
 
     steps:
-      # ------------------------------------------------------------------
-      # Checkout repository
-      # ------------------------------------------------------------------
-      - name: Checkout source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # ------------------------------------------------------------------
-      # ➋ Create a file-system-safe slug from the ref name
-      #    (slashes → dashes, everything else unchanged)
-      # ------------------------------------------------------------------
-      - name: Prepare ref slug
-        id: slug
-        run: |
-          echo "SLUG=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+      - name: Install Doxygen + Graphviz
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
 
-      # ------------------------------------------------------------------
-      # Install Doxygen + Graphviz
-      # ------------------------------------------------------------------
-      - name: Install Doxygen & Graphviz
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y doxygen graphviz
-
-      # ------------------------------------------------------------------
-      # Generate documentation
-      # Assumes your Doxyfile writes HTML to docs/html
-      # ------------------------------------------------------------------
       - name: Generate docs
-        run: doxygen Doxyfile
+        run: doxygen Doxyfile            # OUTPUT_DIRECTORY = docs
 
-      # ------------------------------------------------------------------
-      # ➌ Upload HTML as a run artifact (handy for PR review)
-      # ------------------------------------------------------------------
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      # 1️⃣  Upload the generated site as a Pages artifact
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          # e.g. doxygen-feature-xbee-cellular-3
-          name: doxygen-${{ steps.slug.outputs.SLUG }}
-          path: docs/html
+          path: docs/html                # <— exact folder with index.html
 
-      # ------------------------------------------------------------------
-      # ➍ Deploy every branch to GitHub Pages under its own folder
-      #     gh-pages/<branch-or-tag-slug>/
-      # ------------------------------------------------------------------
+  # 2️⃣  Deploy the artifact to GitHub Pages
+  deploy:
+    needs: docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: docs/html
-          # Folder on gh-pages: one per branch, with slashes removed
-          destination_dir: ${{ steps.slug.outputs.SLUG }}
+        id: deployment
+        uses: actions/deploy-pages@v2
