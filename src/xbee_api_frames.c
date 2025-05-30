@@ -110,7 +110,7 @@
      APIFrameDebugPrint("\n");
  
      // Measure the time taken to send the frame
-     uint32_t startTime = portMillis();
+     uint32_t startTime = self->htable->PortMillis();
      int totalBytesWritten = 0;
  
      while (totalBytesWritten < frameLength) {
@@ -122,15 +122,15 @@
          totalBytesWritten += bytes_written;
  
          // Check for timeout
-         if ((portMillis() - startTime) > UART_WRITE_TIMEOUT_MS) {
-             APIFrameDebugPrint("Error: Frame sending timeout after %lu ms\n", portMillis() - startTime);
+         if ((self->htable->PortMillis() - startTime) > UART_WRITE_TIMEOUT_MS) {
+             APIFrameDebugPrint("Error: Frame sending timeout after %lu ms\n", self->htable->PortMillis() - startTime);
              return API_SEND_ERROR_UART_FAILURE;
          }
-         portDelay(1);
+         self->htable->PortDelay(1);
      }
  
  #if API_FRAME_DEBUG_PRINT_ENABLED
-     uint32_t elapsed_time = portMillis() - startTime;
+     uint32_t elapsed_time = self->htable->PortMillis() - startTime;
  #endif
      APIFrameDebugPrint("UART write completed in %lu ms\n", elapsed_time);
  
@@ -220,7 +220,7 @@
  static api_receive_status_t readBytesWithTimeout(XBee* self, uint8_t* buffer, int length, uint32_t timeoutMs) {
      int totalBytesReceived = 0;
      int bytes_received = 0;
-     uint32_t startTime = portMillis();
+     uint32_t startTime = self->htable->PortMillis();
  
      while (totalBytesReceived < length) {
          bytes_received = self->htable->PortUartRead(buffer + totalBytesReceived, length - totalBytesReceived);
@@ -230,10 +230,10 @@
          }
  
          // Check for timeout
-         if (portMillis() - startTime >= timeoutMs) {
+         if (self->htable->PortMillis() - startTime >= timeoutMs) {
              return API_RECEIVE_ERROR_TIMEOUT_DATA;
          }
-         portDelay(1);  // Add a 1 ms delay to prevent busy-waiting
+         self->htable->PortDelay(1);  // Add a 1 ms delay to prevent busy-waiting
      }
  
      return API_RECEIVE_SUCCESS;

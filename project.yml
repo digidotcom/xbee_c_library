@@ -18,10 +18,6 @@
   :mockable:
     - include
 
-:plugins:
-  :enabled:
-    - stdout_pretty_tests_report
-
 :cmock:
   :mock_prefix: mock_
   :treat_inlines: :include

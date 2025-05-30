@@ -54,6 +54,8 @@
  #define API_SEND_ERROR_FRAME_TOO_LARGE -4
  #define API_SEND_AT_CMD_ERROR -5
  #define API_SEND_AT_CMD_RESONSE_TIMEOUT -6
+ #define API_RECEIVE_ERROR_NULL_FRAME -7              
+ #define API_SEND_ERROR_BUFFER_TOO_SMALL -8           
  
  /**
   * @enum xbee_deliveryStatus_t

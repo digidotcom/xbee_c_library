@@ -1,74 +1,71 @@
 #include "unity.h"
 #include "xbee_api_frames.h"
+#include "xbee_at_cmds.h"
 #include "xbee.h"
 #include <string.h>
 #include <stdlib.h>
 
+
+// ==== Global Offset for Mocks ====
+static size_t mock_offset = 0;
+
 // ==== MOCK HARDWARE FUNCTIONS ====
 
-static int mock_uart_write(const uint8_t *data, uint16_t len) {
+static int mock_uart_write(const uint8_t *data, uint16_t len){
     (void)data;
     return len;
 }
 
-static int mock_uart_read_valid(uint8_t *buffer, uint16_t len) {
+static int mock_uart_read_valid(uint8_t *buffer, int len) {
     static const uint8_t fake_response[] = {
-        0x7E,        // Start delimiter
-        0x00, 0x07,  // Length = 7
-        0x88,        // Frame type: AT response
-        0x01,        // Frame ID
-        'V', 'R',    // AT Command
-        0x00,        // Status
-        0x12         // Dummy data
+        0x7E, 0x00, 0x07, 0x88, 0x01, 'V', 'R', 0x00, 0x12, 0x6A
     };
 
-    static size_t offset = 0;
-    if (offset >= sizeof(fake_response)) return 0;
+    if (mock_offset >= sizeof(fake_response)) return 0;
 
-    size_t bytes_to_copy = len;
-    if (offset + bytes_to_copy > sizeof(fake_response)) {
-        bytes_to_copy = sizeof(fake_response) - offset;
-    }
+    int to_copy = (mock_offset + len > sizeof(fake_response)) ?
+                  (sizeof(fake_response) - mock_offset) : len;
 
-    memcpy(buffer, &fake_response[offset], bytes_to_copy);
-    offset += bytes_to_copy;
-    return bytes_to_copy;
+    memcpy(buffer, &fake_response[mock_offset], to_copy);
+    mock_offset += to_copy;
+    return to_copy;
 }
 
-static int mock_uart_read_bad_start(uint8_t *buffer, uint16_t len) {
-    static const uint8_t bad[] = { 0x00 }; // Not 0x7E
-    memcpy(buffer, bad, 1);
+static int mock_uart_read_bad_start(uint8_t *buffer, int len) {
+    (void)len;
+    buffer[0] = 0x00; // Invalid delimiter
     return 1;
 }
 
-static int mock_uart_read_incomplete(uint8_t *buffer, uint16_t len) {
-    static const uint8_t incomplete[] = {
-        0x7E, 0x00, 0x05, 0x88, 0x01, 'V'  // Only part of a frame
-    };
-    static size_t offset = 0;
+static int mock_uart_read_incomplete(uint8_t *buffer, int len) {
+    static const uint8_t incomplete[] = { 0x7E, 0x00, 0x05, 0x88, 0x01, 'V' };
+    if (mock_offset >= sizeof(incomplete)) return 0;
 
-    if (offset >= sizeof(incomplete)) return 0;
-    size_t copy_len = (offset + len > sizeof(incomplete)) ? sizeof(incomplete) - offset : len;
-    memcpy(buffer, &incomplete[offset], copy_len);
-    offset += copy_len;
-    return copy_len;
+    int to_copy = (mock_offset + len > sizeof(incomplete)) ?
+                  (sizeof(incomplete) - mock_offset) : len;
+
+    memcpy(buffer, &incomplete[mock_offset], to_copy);
+    mock_offset += to_copy;
+    return to_copy;
 }
 
-static int mock_uart_read_bad_checksum(uint8_t *buffer, uint16_t len) {
+static int mock_uart_read_bad_checksum(uint8_t *buffer, int len) {
     static const uint8_t frame[] = {
-        0x7E, 0x00, 0x05, 0x88, 0x01, 'V', 'R', 0x00, 0x99  // Bad checksum
+        0x7E, 0x00, 0x07, 0x88, 0x01, 'V', 'R', 0x00, 0x12, 0x00 // Invalid checksum
     };
-    static size_t offset = 0;
-    if (offset >= sizeof(frame)) return 0;
-    size_t to_copy = (offset + len > sizeof(frame)) ? sizeof(frame) - offset : len;
-    memcpy(buffer, &frame[offset], to_copy);
-    offset += to_copy;
+    if (mock_offset >= sizeof(frame)) return 0;
+
+    int to_copy = (mock_offset + len > sizeof(frame)) ?
+                  (sizeof(frame) - mock_offset) : len;
+
+    memcpy(buffer, &frame[mock_offset], to_copy);
+    mock_offset += to_copy;
     return to_copy;
 }
 
 static uint32_t mock_millis(void) {
     static uint32_t t = 0;
-    t += 10;
+    t += 50;
     return t;
 }
 
@@ -92,7 +89,6 @@ static XBee mock_xbee = {
 };
 
 // ==== TEST SETUP ====
-
 void setUp(void) {
     mock_xbee.frameIdCntr = 1;
     mock_hTable.PortUartRead = mock_uart_read_valid;
@@ -107,7 +103,6 @@ void test_asciiToHexArray_valid_input(void) {
     uint8_t expected[] = {0x1A, 0x2B, 0x3C, 0x4D};
     uint8_t output[4];
     int len = asciiToHexArray(ascii, output, 4);
-
     TEST_ASSERT_EQUAL_INT(4, len);
     TEST_ASSERT_EQUAL_UINT8_ARRAY(expected, output, 4);
 }
@@ -176,10 +171,11 @@ void test_apiHandleFrame_calls_correct_handler(void) {
     apiHandleFrame(&mock_xbee, frame);
 }
 
-// ==== Additional Tests for Malformed Frames ====
+// ==== Edge Case Tests ====
 
 void test_apiReceiveApiFrame_invalid_start_delimiter(void) {
     mock_hTable.PortUartRead = mock_uart_read_bad_start;
+    mock_offset = 0;
     xbee_api_frame_t frame;
     int status = apiReceiveApiFrame(&mock_xbee, &frame);
     TEST_ASSERT_EQUAL_INT(API_RECEIVE_ERROR_INVALID_START_DELIMITER, status);
@@ -187,6 +183,7 @@ void test_apiReceiveApiFrame_invalid_start_delimiter(void) {
 
 void test_apiReceiveApiFrame_incomplete_frame(void) {
     mock_hTable.PortUartRead = mock_uart_read_incomplete;
+    mock_offset = 0;
     xbee_api_frame_t frame;
     int status = apiReceiveApiFrame(&mock_xbee, &frame);
     TEST_ASSERT_EQUAL_INT(API_RECEIVE_ERROR_TIMEOUT_DATA, status);
@@ -194,26 +191,20 @@ void test_apiReceiveApiFrame_incomplete_frame(void) {
 
 void test_apiReceiveApiFrame_bad_checksum(void) {
     mock_hTable.PortUartRead = mock_uart_read_bad_checksum;
+    mock_offset = 0;
     xbee_api_frame_t frame;
     int status = apiReceiveApiFrame(&mock_xbee, &frame);
     TEST_ASSERT_EQUAL_INT(API_RECEIVE_ERROR_INVALID_CHECKSUM, status);
 }
 
-// ==== MAIN RUNNER (Uncomment to run standalone) ====
-// int main(void) {
-//     UNITY_BEGIN();
-//     RUN_TEST(test_asciiToHexArray_valid_input);
-//     RUN_TEST(test_asciiToHexArray_invalid_length);
-//     RUN_TEST(test_apiSendAtCommand_valid);
-//     RUN_TEST(test_apiSendAtCommand_invalid);
-//     RUN_TEST(test_apiSendFrame_valid);
-//     RUN_TEST(test_apiReceiveApiFrame_basic_parse);
-//     RUN_TEST(test_apiSendAtCommandAndGetResponse_simulated);
-//     RUN_TEST(test_xbeeHandleAtResponse_should_print);
-//     RUN_TEST(test_xbeeHandleModemStatus_should_print);
-//     RUN_TEST(test_apiHandleFrame_calls_correct_handler);
-//     RUN_TEST(test_apiReceiveApiFrame_invalid_start_delimiter);
-//     RUN_TEST(test_apiReceiveApiFrame_incomplete_frame);
-//     RUN_TEST(test_apiReceiveApiFrame_bad_checksum);
-//     return UNITY_END();
-// }
+void test_apiReceiveApiFrame_null_frame_buffer(void) {
+    int status = apiReceiveApiFrame(&mock_xbee, NULL);
+    TEST_ASSERT_EQUAL_INT(API_RECEIVE_ERROR_NULL_FRAME, status);
+}
+
+void test_apiSendAtCommandAndGetResponse_buffer_overflow(void) {
+    uint8_t buf[2] = {0};
+    uint8_t len = 0;
+    int status = apiSendAtCommandAndGetResponse(&mock_xbee, AT_VR, NULL, 0, buf, &len, 5000, 1);
+    TEST_ASSERT_EQUAL_INT(API_SEND_ERROR_BUFFER_TOO_SMALL, status);
+}
