@@ -1,38 +1,62 @@
 # .github/workflows/doxygen.yml
 name: Doxygen Docs
 
-# ➊ Every push, every branch – plus PRs for lint/warning checks
+# ────────────────────────────────
+# Run on every push + every PR
+# ────────────────────────────────
 on:
   push:
-    branches: [ "**" ]     # match _everything_
-  pull_request:
+    branches: ["**"]          # all branches
+  pull_request:               # PRs from forks included
 
 jobs:
   docs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+    # ────────────────────────────────
+    # 1. Checkout code
+    # ────────────────────────────────
+    - uses: actions/checkout@v4
 
-      - name: Install Doxygen + Graphviz
-        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+    # ────────────────────────────────
+    # 2. Install Doxygen tool-chain
+    # ────────────────────────────────
+    - name: Install Doxygen & Graphviz
+      run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
 
-      - name: Generate docs
-        run: doxygen Doxyfile      # assumes OUTPUT_DIRECTORY=docs
+    # ────────────────────────────────
+    # 3. Build docs    (OUTPUT_DIRECTORY = docs )
+    # ────────────────────────────────
+    - name: Generate documentation
+      run: doxygen Doxyfile
 
-      # ➋ Upload as an artifact (handy for PR review, no deploy needed)
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: doxygen-${{ github.ref_name }}
-          path: docs/html
+    # ────────────────────────────────
+    # 4. Upload artifact (easy download
+    #    from PR overview)
+    # ────────────────────────────────
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: docs-${{ github.ref_name }}
+        path: docs/html
+        retention-days: 7
 
-      # ➌ Deploy **every branch** to gh-pages/branch-name/
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: docs/html
-          destination_dir: ${{ github.ref_name }}
+    # ────────────────────────────────
+    # 5. Publish to gh-pages
+    #
+    #    • one sub-folder per branch
+    #        main   ➜ /
+    #        develop➜ /develop/
+    #        feat/x ➜ /feat-x/
+    #
+    # ────────────────────────────────
+    - name: Deploy to gh-pages
+      if: github.event_name == 'push'       # don’t deploy from PRs
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages            # branch will be created automatically
+        publish_dir: docs/html
+        destination_dir: |
+          ${{ github.ref_name == 'main' && '' || github.ref_name }}
