@@ -119,20 +119,20 @@ void test_XBeeCellularSocketClose_should_return_false_on_send_failure(void) {
     TEST_ASSERT_FALSE(XBeeCellularSocketClose(self, 2));
 }
 
-// Entry point
-int main(void) {
-    UNITY_BEGIN();
-    RUN_TEST(test_XBeeCellularInit_should_return_true_when_uart_init_succeeds);
-    RUN_TEST(test_XBeeCellularConnected_should_return_true_when_AI_is_zero);
-    RUN_TEST(test_XBeeCellularConnect_should_return_false_when_attach_fails);
-    RUN_TEST(test_XBeeCellularDisconnect_should_send_AT_SD_and_return_true);
-    RUN_TEST(test_XBeeCellularSendData_should_return_success_when_frame_sent);
-    RUN_TEST(test_XBeeCellularSoftReset_should_send_AT_SD);
-    RUN_TEST(test_XBeeCellularHardReset_should_not_crash);
-    RUN_TEST(test_XBeeCellularConfigure_should_copy_config);
-    RUN_TEST(test_XBeeCellularSocketCreate_should_return_socket_id_on_success);
-    RUN_TEST(test_XBeeCellularSocketSend_should_return_false_on_null_payload);
-    RUN_TEST(test_XBeeCellularSocketSetOption_should_send_option);
-    RUN_TEST(test_XBeeCellularSocketClose_should_return_false_on_send_failure);
-    return UNITY_END();
-}
+// // Entry point
+// int main(void) {
+//     UNITY_BEGIN();
+//     RUN_TEST(test_XBeeCellularInit_should_return_true_when_uart_init_succeeds);
+//     RUN_TEST(test_XBeeCellularConnected_should_return_true_when_AI_is_zero);
+//     RUN_TEST(test_XBeeCellularConnect_should_return_false_when_attach_fails);
+//     RUN_TEST(test_XBeeCellularDisconnect_should_send_AT_SD_and_return_true);
+//     RUN_TEST(test_XBeeCellularSendData_should_return_success_when_frame_sent);
+//     RUN_TEST(test_XBeeCellularSoftReset_should_send_AT_SD);
+//     RUN_TEST(test_XBeeCellularHardReset_should_not_crash);
+//     RUN_TEST(test_XBeeCellularConfigure_should_copy_config);
+//     RUN_TEST(test_XBeeCellularSocketCreate_should_return_socket_id_on_success);
+//     RUN_TEST(test_XBeeCellularSocketSend_should_return_false_on_null_payload);
+//     RUN_TEST(test_XBeeCellularSocketSetOption_should_send_option);
+//     RUN_TEST(test_XBeeCellularSocketClose_should_return_false_on_send_failure);
+//     return UNITY_END();
+// }
