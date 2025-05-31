@@ -1,7 +1,7 @@
-<map id="examples/xbee_cellular/xbee_cellular_http_get_example.c" name="examples/xbee_cellular/xbee_cellular_http_get_example.c">
-<area shape="rect" id="Node000001" title="Example application demonstrating the use of the XBeeCellular driver." alt="" coords="355,5,532,60"/>
+<map id="examples/xbee_cellular/xbee_cellular_udp_echo_example.c" name="examples/xbee_cellular/xbee_cellular_udp_echo_example.c">
+<area shape="rect" id="Node000001" title="Sends a UDP datagram to Digi’s public echo server (52.43.121.77:10001) and prints the echoed payload ..." alt="" coords="352,5,535,60"/>
 <area shape="rect" id="Node000002" href="$xbee__cellular_8h.html" title="Header for XBee 3 Cellular API." alt="" coords="81,108,201,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="355,62,195,107,193,102,354,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="352,62,195,107,193,102,351,57"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="323,255,406,280"/>
 <area shape="poly" id="edge15_Node000001_Node000005" title=" " alt="" coords="437,61,376,242,371,240,432,59"/>
 <area shape="rect" id="Node000008" href="$port_8h.html" title="Platform&#45;specific abstraction layer for hardware interfaces." alt="" coords="195,328,255,353"/>

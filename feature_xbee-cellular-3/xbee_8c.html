@@ -125,11 +125,11 @@ Functions</h2></td></tr>
 <tr class="memitem:a5f17a413c3413bb991e433e08cdd89a0" id="r_a5f17a413c3413bb991e433e08cdd89a0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a5f17a413c3413bb991e433e08cdd89a0">XBeeDisconnect</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
 <tr class="memdesc:a5f17a413c3413bb991e433e08cdd89a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnects the <a class="el" href="structXBee.html">XBee</a> from the network.  <br /></td></tr>
 <tr class="separator:a5f17a413c3413bb991e433e08cdd89a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46d6a6a9c5bb9476379a1d453b74f74e" id="r_a46d6a6a9c5bb9476379a1d453b74f74e"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a46d6a6a9c5bb9476379a1d453b74f74e">XBeeSendData</a> (<a class="el" href="structXBee.html">XBee</a> *self, const void *data)</td></tr>
-<tr class="memdesc:a46d6a6a9c5bb9476379a1d453b74f74e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request <a class="el" href="structXBee.html">XBee</a> to send data over network.  <br /></td></tr>
-<tr class="separator:a46d6a6a9c5bb9476379a1d453b74f74e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69ed767cb8a5b5d6c7071fd19f99a785" id="r_a69ed767cb8a5b5d6c7071fd19f99a785"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a69ed767cb8a5b5d6c7071fd19f99a785">XBeeSendPacket</a> (<a class="el" href="structXBee.html">XBee</a> *self, const void *data)</td></tr>
+<tr class="memdesc:a69ed767cb8a5b5d6c7071fd19f99a785"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request <a class="el" href="structXBee.html">XBee</a> to send data over network.  <br /></td></tr>
+<tr class="separator:a69ed767cb8a5b5d6c7071fd19f99a785"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a702d9c7532e77362c7ee55bed74b0d3b" id="r_a702d9c7532e77362c7ee55bed74b0d3b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a702d9c7532e77362c7ee55bed74b0d3b">XBeeSoftReset</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
-<tr class="memdesc:a702d9c7532e77362c7ee55bed74b0d3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a soft reset of the <a class="el" href="structXBee.html">XBee</a> module.  <br /></td></tr>
+<tr class="memdesc:a702d9c7532e77362c7ee55bed74b0d3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a module reboot (ATRE).  <br /></td></tr>
 <tr class="separator:a702d9c7532e77362c7ee55bed74b0d3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af65faaa121113bb99e0fcbbd8e672d63" id="r_af65faaa121113bb99e0fcbbd8e672d63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#af65faaa121113bb99e0fcbbd8e672d63">XBeeHardReset</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
 <tr class="memdesc:af65faaa121113bb99e0fcbbd8e672d63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a hard reset of the <a class="el" href="structXBee.html">XBee</a> module.  <br /></td></tr>
@@ -155,12 +155,36 @@ Functions</h2></td></tr>
 <tr class="memitem:ac2870516a2a3cf67912688bb777d9b88" id="r_ac2870516a2a3cf67912688bb777d9b88"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#ac2870516a2a3cf67912688bb777d9b88">XBeeGetFirmwareVersion</a> (<a class="el" href="structXBee.html">XBee</a> *self, uint32_t *version)</td></tr>
 <tr class="memdesc:ac2870516a2a3cf67912688bb777d9b88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the firmware version of the <a class="el" href="structXBee.html">XBee</a> module using the ATVR command.  <br /></td></tr>
 <tr class="separator:ac2870516a2a3cf67912688bb777d9b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42871b1411c70d838c1f20f7c3e0e0b5" id="r_a42871b1411c70d838c1f20f7c3e0e0b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a42871b1411c70d838c1f20f7c3e0e0b5">XBeeFactoryReset</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
+<tr class="memdesc:a42871b1411c70d838c1f20f7c3e0e0b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restores factory defaults (ATFR).  <br /></td></tr>
+<tr class="separator:a42871b1411c70d838c1f20f7c3e0e0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe2b588bfe1cce4de76eca9fc9598219" id="r_afe2b588bfe1cce4de76eca9fc9598219"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#afe2b588bfe1cce4de76eca9fc9598219">XBeeSoftRestart</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
+<tr class="memdesc:afe2b588bfe1cce4de76eca9fc9598219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a module reboot (ATRE).  <br /></td></tr>
+<tr class="separator:afe2b588bfe1cce4de76eca9fc9598219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac88061a6952558bcc83086e7327364e1" id="r_ac88061a6952558bcc83086e7327364e1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#ac88061a6952558bcc83086e7327364e1">XBeeExitCommandMode</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
+<tr class="memdesc:ac88061a6952558bcc83086e7327364e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exits AT-command mode (ATCN).  <br /></td></tr>
+<tr class="separator:ac88061a6952558bcc83086e7327364e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b3b5bf09f1be30c9aa751be0a110945" id="r_a1b3b5bf09f1be30c9aa751be0a110945"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a1b3b5bf09f1be30c9aa751be0a110945">XBeeSetApiEnable</a> (<a class="el" href="structXBee.html">XBee</a> *self, uint8_t mode)</td></tr>
+<tr class="memdesc:a1b3b5bf09f1be30c9aa751be0a110945"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables or disables API mode (ATAP).  <br /></td></tr>
+<tr class="separator:a1b3b5bf09f1be30c9aa751be0a110945"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e3e1d0bed80d3d182c5b8f0ca456bd7" id="r_a1e3e1d0bed80d3d182c5b8f0ca456bd7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a1e3e1d0bed80d3d182c5b8f0ca456bd7">XBeeSetBaudRate</a> (<a class="el" href="structXBee.html">XBee</a> *self, uint8_t rateCode)</td></tr>
+<tr class="memdesc:a1e3e1d0bed80d3d182c5b8f0ca456bd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the UART baud-rate (ATBD).  <br /></td></tr>
+<tr class="separator:a1e3e1d0bed80d3d182c5b8f0ca456bd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45c60bfca9c54aebe53b284fb1f86867" id="r_a45c60bfca9c54aebe53b284fb1f86867"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a45c60bfca9c54aebe53b284fb1f86867">XBeeGetLastRssi</a> (<a class="el" href="structXBee.html">XBee</a> *self, int8_t *rssiOut)</td></tr>
+<tr class="memdesc:a45c60bfca9c54aebe53b284fb1f86867"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads last-hop RSSI in dBm (ATDB).  <br /></td></tr>
+<tr class="separator:a45c60bfca9c54aebe53b284fb1f86867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a672ee19f13b8da42012efb10138fe8db" id="r_a672ee19f13b8da42012efb10138fe8db"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a672ee19f13b8da42012efb10138fe8db">XBeeGetHardwareVersion</a> (<a class="el" href="structXBee.html">XBee</a> *self, uint16_t *hvOut)</td></tr>
+<tr class="memdesc:a672ee19f13b8da42012efb10138fe8db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the hardware revision (ATHV).  <br /></td></tr>
+<tr class="separator:a672ee19f13b8da42012efb10138fe8db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bf59e4bad9347d43f9cd7692b1fc412" id="r_a1bf59e4bad9347d43f9cd7692b1fc412"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee_8c.html#a1bf59e4bad9347d43f9cd7692b1fc412">XBeeGetSerialNumber</a> (<a class="el" href="structXBee.html">XBee</a> *self, uint64_t *snOut)</td></tr>
+<tr class="memdesc:a1bf59e4bad9347d43f9cd7692b1fc412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the 64-bit factory serial number (ATSH + ATSL).  <br /></td></tr>
+<tr class="separator:a1bf59e4bad9347d43f9cd7692b1fc412"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the <a class="el" href="structXBee.html">XBee</a> class. </p>
 <p>This file contains the implementation of the core functions used to interact with <a class="el" href="structXBee.html">XBee</a> modules using the API frame format. The functions provide an interface for initializing the module, connecting/disconnect to the nework, sending and receiving data, and handling AT commands.</p>
-<dl class="section version"><dt>Version</dt><dd>1.1 </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>2025-05-01</dd></dl>
+<dl class="section version"><dt>Version</dt><dd>1.2 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2025-05-31</dd></dl>
 <p>@license MIT Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
@@ -328,6 +352,62 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ac88061a6952558bcc83086e7327364e1" name="ac88061a6952558bcc83086e7327364e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac88061a6952558bcc83086e7327364e1">&#9670;&#160;</a></span>XBeeExitCommandMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool XBeeExitCommandMode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Exits AT-command mode (ATCN). </p>
+<p>Useful after using legacy “transparent” <code>+++</code> mode.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the command was sent successfully, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a42871b1411c70d838c1f20f7c3e0e0b5" name="a42871b1411c70d838c1f20f7c3e0e0b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42871b1411c70d838c1f20f7c3e0e0b5">&#9670;&#160;</a></span>XBeeFactoryReset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool XBeeFactoryReset </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Restores factory defaults (ATFR). </p>
+<p>Sends the <code>AT_FR</code> command and returns when the frame is accepted.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the command was sent successfully, otherwise false. </dd></dl>
+
+</div>
+</div>
 <a id="ac2870516a2a3cf67912688bb777d9b88" name="ac2870516a2a3cf67912688bb777d9b88"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2870516a2a3cf67912688bb777d9b88">&#9670;&#160;</a></span>XBeeGetFirmwareVersion()</h2>
 
@@ -364,6 +444,120 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bool Returns true if the firmware version was retrieved successfully. </dd></dl>
+
+</div>
+</div>
+<a id="a672ee19f13b8da42012efb10138fe8db" name="a672ee19f13b8da42012efb10138fe8db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a672ee19f13b8da42012efb10138fe8db">&#9670;&#160;</a></span>XBeeGetHardwareVersion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool XBeeGetHardwareVersion </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *&#160;</td>
+          <td class="paramname"><em>hvOut</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieves the hardware revision (ATHV). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">hvOut</td><td>Pointer to receive 16-bit hardware version.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the hardware version was retrieved, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a45c60bfca9c54aebe53b284fb1f86867" name="a45c60bfca9c54aebe53b284fb1f86867"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45c60bfca9c54aebe53b284fb1f86867">&#9670;&#160;</a></span>XBeeGetLastRssi()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool XBeeGetLastRssi </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t *&#160;</td>
+          <td class="paramname"><em>rssiOut</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads last-hop RSSI in dBm (ATDB). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">rssiOut</td><td>Pointer that receives signed RSSI in dBm.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if RSSI was read successfully, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a1bf59e4bad9347d43f9cd7692b1fc412" name="a1bf59e4bad9347d43f9cd7692b1fc412"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bf59e4bad9347d43f9cd7692b1fc412">&#9670;&#160;</a></span>XBeeGetSerialNumber()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool XBeeGetSerialNumber </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t *&#160;</td>
+          <td class="paramname"><em>snOut</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieves the 64-bit factory serial number (ATSH + ATSL). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">snOut</td><td>Pointer to receive the 64-bit serial number.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the serial number was retrieved, otherwise false. </dd></dl>
 
 </div>
 </div>
@@ -469,14 +663,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a46d6a6a9c5bb9476379a1d453b74f74e" name="a46d6a6a9c5bb9476379a1d453b74f74e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46d6a6a9c5bb9476379a1d453b74f74e">&#9670;&#160;</a></span>XBeeSendData()</h2>
+<a id="a69ed767cb8a5b5d6c7071fd19f99a785" name="a69ed767cb8a5b5d6c7071fd19f99a785"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69ed767cb8a5b5d6c7071fd19f99a785">&#9670;&#160;</a></span>XBeeSendPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t XBeeSendData </td>
+          <td class="memname">uint8_t XBeeSendPacket </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
           <td class="paramname"><em>self</em>, </td>
@@ -504,6 +698,44 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>xbee_deliveryStatus_t, 0 if successful </dd></dl>
+
+</div>
+</div>
+<a id="a1b3b5bf09f1be30c9aa751be0a110945" name="a1b3b5bf09f1be30c9aa751be0a110945"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b3b5bf09f1be30c9aa751be0a110945">&#9670;&#160;</a></span>XBeeSetApiEnable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool XBeeSetApiEnable </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>mode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enables or disables API mode (ATAP). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mode</td><td>0 = Transparent, 1 = API (no escape), 2 = API-escaped.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the command was accepted, otherwise false. </dd></dl>
 
 </div>
 </div>
@@ -546,6 +778,45 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a1e3e1d0bed80d3d182c5b8f0ca456bd7" name="a1e3e1d0bed80d3d182c5b8f0ca456bd7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e3e1d0bed80d3d182c5b8f0ca456bd7">&#9670;&#160;</a></span>XBeeSetBaudRate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool XBeeSetBaudRate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>rateCode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Changes the UART baud-rate (ATBD). </p>
+<p>Pass the <em>rate code</em> defined by Digi (e.g. 3 → 9600, 7 → 115200).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rateCode</td><td>Digi baud-rate code.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the baud-rate was accepted, otherwise false. </dd></dl>
+
+</div>
+</div>
 <a id="a702d9c7532e77362c7ee55bed74b0d3b" name="a702d9c7532e77362c7ee55bed74b0d3b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a702d9c7532e77362c7ee55bed74b0d3b">&#9670;&#160;</a></span>XBeeSoftReset()</h2>
 
@@ -562,15 +833,41 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Performs a soft reset of the <a class="el" href="structXBee.html">XBee</a> module. </p>
-<p>This function invokes the <code>soft_reset</code> method defined in the <a class="el" href="structXBee.html">XBee</a> subclass's virtual table (vtable) to perform a soft reset of the <a class="el" href="structXBee.html">XBee</a> module. A soft reset typically involves resetting the module's state without a full power cycle.</p>
+<p>Performs a module reboot (ATRE). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>bool Returns true if the soft reset is successful, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the command was sent successfully, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="afe2b588bfe1cce4de76eca9fc9598219" name="afe2b588bfe1cce4de76eca9fc9598219"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe2b588bfe1cce4de76eca9fc9598219">&#9670;&#160;</a></span>XBeeSoftRestart()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool XBeeSoftRestart </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Performs a module reboot (ATRE). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Pointer to the <a class="el" href="structXBee.html">XBee</a> instance.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool True if the command was sent successfully, otherwise false. </dd></dl>
 
 </div>
 </div>

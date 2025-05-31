@@ -210,10 +210,15 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deeab80885b1e26e70f3968087d7da8ae8b8">XBEE_API_TYPE_CELLULAR_SOCKET_CLOSE</a> = 0x43
 , <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea1a115749492c93e849938b5ca9276986">XBEE_API_TYPE_CELLULAR_SOCKET_SEND</a> = 0x44
-, <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deeaf3175dce4c3a54df6476debc144865ef">XBEE_API_TYPE_CELLULAR_SOCKET_CREATE_RESPONSE</a> = 0xC0
-, <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea58ab16d330576a6fed56b106fa397069">XBEE_API_TYPE_CELLULAR_SOCKET_OPTION_RESPONSE</a> = 0xC1
+, <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea17e33c2ccc24e802ff39fb090d9df23f">XBEE_API_TYPE_CELLULAR_SOCKET_SEND_TO</a> = 0x45
+, <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deeaa10961a2e52c2c8aa86b72e5aaa1206d">XBEE_API_TYPE_CELLULAR_SOCKET_BIND</a> = 0x46
 , <br />
-&#160;&#160;<a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea374a35096300a293d5e021347d2c4c5a">XBEE_API_TYPE_CELLULAR_SOCKET_CONNECT_RESPONSE</a> = 0xC2
+&#160;&#160;<a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deeaf3175dce4c3a54df6476debc144865ef">XBEE_API_TYPE_CELLULAR_SOCKET_CREATE_RESPONSE</a> = 0xC0
+, <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea58ab16d330576a6fed56b106fa397069">XBEE_API_TYPE_CELLULAR_SOCKET_OPTION_RESPONSE</a> = 0xC1
+, <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea374a35096300a293d5e021347d2c4c5a">XBEE_API_TYPE_CELLULAR_SOCKET_CONNECT_RESPONSE</a> = 0xC2
+, <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deeabfa1cb8d3112329e7076d64df4a2c246">XBEE_API_TYPE_CELLULAR_SOCKET_CLOSE_RESPONSE</a> = 0xC3
+, <br />
+&#160;&#160;<a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea5778d479284f8258201129e91d0d2e3b">XBEE_API_TYPE_CELLULAR_SOCKET_BIND_RESPONSE</a> = 0xC6
 , <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea0ec8708b636a8986fd7edd61a5955897">XBEE_API_TYPE_CELLULAR_SOCKET_RX</a> = 0xCD
 , <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea76440c2530de3d914d65f38d0df3b2ac">XBEE_API_TYPE_CELLULAR_SOCKET_RX_FROM</a> = 0xCE
 , <a class="el" href="xbee__api__frames_8h.html#a39ad2f90584329368294c4bc09395deea3897287487212497cca4dd0730e567fd">XBEE_API_TYPE_CELLULAR_SOCKET_STATUS</a> = 0xCF
@@ -541,11 +546,19 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deea1a115749492c93e849938b5ca9276986" name="a39ad2f90584329368294c4bc09395deea1a115749492c93e849938b5ca9276986"></a>XBEE_API_TYPE_CELLULAR_SOCKET_SEND&#160;</td><td class="fielddoc"><p>Frame to send socket data. </p>
 </td></tr>
+<tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deea17e33c2ccc24e802ff39fb090d9df23f" name="a39ad2f90584329368294c4bc09395deea17e33c2ccc24e802ff39fb090d9df23f"></a>XBEE_API_TYPE_CELLULAR_SOCKET_SEND_TO&#160;</td><td class="fielddoc"><p>Frame to send UDP data to a specific address. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deeaa10961a2e52c2c8aa86b72e5aaa1206d" name="a39ad2f90584329368294c4bc09395deeaa10961a2e52c2c8aa86b72e5aaa1206d"></a>XBEE_API_TYPE_CELLULAR_SOCKET_BIND&#160;</td><td class="fielddoc"><p>Frame to bind a socket to a local port. </p>
+</td></tr>
 <tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deeaf3175dce4c3a54df6476debc144865ef" name="a39ad2f90584329368294c4bc09395deeaf3175dce4c3a54df6476debc144865ef"></a>XBEE_API_TYPE_CELLULAR_SOCKET_CREATE_RESPONSE&#160;</td><td class="fielddoc"><p>Response to socket create. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deea58ab16d330576a6fed56b106fa397069" name="a39ad2f90584329368294c4bc09395deea58ab16d330576a6fed56b106fa397069"></a>XBEE_API_TYPE_CELLULAR_SOCKET_OPTION_RESPONSE&#160;</td><td class="fielddoc"><p>Response to socket option. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deea374a35096300a293d5e021347d2c4c5a" name="a39ad2f90584329368294c4bc09395deea374a35096300a293d5e021347d2c4c5a"></a>XBEE_API_TYPE_CELLULAR_SOCKET_CONNECT_RESPONSE&#160;</td><td class="fielddoc"><p>Response to socket connect. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deeabfa1cb8d3112329e7076d64df4a2c246" name="a39ad2f90584329368294c4bc09395deeabfa1cb8d3112329e7076d64df4a2c246"></a>XBEE_API_TYPE_CELLULAR_SOCKET_CLOSE_RESPONSE&#160;</td><td class="fielddoc"><p>Response to socket close. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deea5778d479284f8258201129e91d0d2e3b" name="a39ad2f90584329368294c4bc09395deea5778d479284f8258201129e91d0d2e3b"></a>XBEE_API_TYPE_CELLULAR_SOCKET_BIND_RESPONSE&#160;</td><td class="fielddoc"><p>Response to socket bind. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a39ad2f90584329368294c4bc09395deea0ec8708b636a8986fd7edd61a5955897" name="a39ad2f90584329368294c4bc09395deea0ec8708b636a8986fd7edd61a5955897"></a>XBEE_API_TYPE_CELLULAR_SOCKET_RX&#160;</td><td class="fielddoc"><p>Frame for receiving data. </p>
 </td></tr>

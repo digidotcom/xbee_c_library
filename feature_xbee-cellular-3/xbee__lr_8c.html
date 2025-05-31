@@ -143,9 +143,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ad348e6853c207a58f438e80743028917" id="r_ad348e6853c207a58f438e80743028917"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee__lr_8c.html#ad348e6853c207a58f438e80743028917">XBeeLRDisconnect</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
 <tr class="memdesc:ad348e6853c207a58f438e80743028917"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnects from the LoRaWAN network using the <a class="el" href="structXBee.html">XBee</a> LR module.  <br /></td></tr>
 <tr class="separator:ad348e6853c207a58f438e80743028917"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81598ca357cce6cb61bdc5628bdb976a" id="r_a81598ca357cce6cb61bdc5628bdb976a"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee__lr_8c.html#a81598ca357cce6cb61bdc5628bdb976a">XBeeLRSendData</a> (<a class="el" href="structXBee.html">XBee</a> *self, const void *data)</td></tr>
-<tr class="memdesc:a81598ca357cce6cb61bdc5628bdb976a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends data over the network using the <a class="el" href="structXBee.html">XBee</a> LR module.  <br /></td></tr>
-<tr class="separator:a81598ca357cce6cb61bdc5628bdb976a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ae202c179f4324905577c9febcd1709" id="r_a8ae202c179f4324905577c9febcd1709"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee__lr_8c.html#a8ae202c179f4324905577c9febcd1709">XBeeLRSendPacket</a> (<a class="el" href="structXBee.html">XBee</a> *self, const void *data)</td></tr>
+<tr class="memdesc:a8ae202c179f4324905577c9febcd1709"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends data over the network using the <a class="el" href="structXBee.html">XBee</a> LR module.  <br /></td></tr>
+<tr class="separator:a8ae202c179f4324905577c9febcd1709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5236c21963d9f60bf5febcc40cb5a99" id="r_ab5236c21963d9f60bf5febcc40cb5a99"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee__lr_8c.html#ab5236c21963d9f60bf5febcc40cb5a99">XBeeLRSoftReset</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
 <tr class="separator:ab5236c21963d9f60bf5febcc40cb5a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86a1a4d2cb3416504325ac8ee9ace996" id="r_a86a1a4d2cb3416504325ac8ee9ace996"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="xbee__lr_8c.html#a86a1a4d2cb3416504325ac8ee9ace996">XBeeLRHardReset</a> (<a class="el" href="structXBee.html">XBee</a> *self)</td></tr>
@@ -545,14 +545,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a81598ca357cce6cb61bdc5628bdb976a" name="a81598ca357cce6cb61bdc5628bdb976a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81598ca357cce6cb61bdc5628bdb976a">&#9670;&#160;</a></span>XBeeLRSendData()</h2>
+<a id="a8ae202c179f4324905577c9febcd1709" name="a8ae202c179f4324905577c9febcd1709"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ae202c179f4324905577c9febcd1709">&#9670;&#160;</a></span>XBeeLRSendPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t XBeeLRSendData </td>
+          <td class="memname">uint8_t XBeeLRSendPacket </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structXBee.html">XBee</a> *&#160;</td>
           <td class="paramname"><em>self</em>, </td>
@@ -1270,7 +1270,7 @@ Variables</h2></td></tr>
 <div class="line">     .process = <a class="code hl_function" href="xbee__lr_8c.html#aa4d75106937bb888ec4fb64b337f5991">XBeeLRProcess</a>,</div>
 <div class="line">     .connect = <a class="code hl_function" href="xbee__lr_8c.html#aa9879acddbc3cb54ffb73a7d4fb12a64">XBeeLRConnect</a>,</div>
 <div class="line">     .disconnect = <a class="code hl_function" href="xbee__lr_8c.html#ad348e6853c207a58f438e80743028917">XBeeLRDisconnect</a>,</div>
-<div class="line">     .sendData = <a class="code hl_function" href="xbee__lr_8c.html#a81598ca357cce6cb61bdc5628bdb976a">XBeeLRSendData</a>,</div>
+<div class="line">     .sendData = <a class="code hl_function" href="xbee__lr_8c.html#a8ae202c179f4324905577c9febcd1709">XBeeLRSendPacket</a>,</div>
 <div class="line">     .softReset = <a class="code hl_function" href="xbee__lr_8c.html#ab5236c21963d9f60bf5febcc40cb5a99">XBeeLRSoftReset</a>,</div>
 <div class="line">     .hardReset = <a class="code hl_function" href="xbee__lr_8c.html#a86a1a4d2cb3416504325ac8ee9ace996">XBeeLRHardReset</a>,</div>
 <div class="line">     .connected = <a class="code hl_function" href="xbee__lr_8c.html#a23b7a8af786d46e6978eb4bbd1ab9a80">XBeeLRConnected</a>,</div>
@@ -1278,8 +1278,8 @@ Variables</h2></td></tr>
 <div class="line">     .handleTransmitStatusFrame = <a class="code hl_function" href="xbee__lr_8c.html#a8f51e5cba1fa8406644171d3bfccef9a">XBeeLRHandleTransmitStatus</a>,</div>
 <div class="line"> }</div>
 <div class="ttc" id="axbee__lr_8c_html_a23b7a8af786d46e6978eb4bbd1ab9a80"><div class="ttname"><a href="xbee__lr_8c.html#a23b7a8af786d46e6978eb4bbd1ab9a80">XBeeLRConnected</a></div><div class="ttdeci">bool XBeeLRConnected(XBee *self)</div><div class="ttdoc">Checks if the XBee LR module is connected to the LoRaWAN network.</div><div class="ttdef"><b>Definition</b> xbee_lr.c:59</div></div>
-<div class="ttc" id="axbee__lr_8c_html_a81598ca357cce6cb61bdc5628bdb976a"><div class="ttname"><a href="xbee__lr_8c.html#a81598ca357cce6cb61bdc5628bdb976a">XBeeLRSendData</a></div><div class="ttdeci">uint8_t XBeeLRSendData(XBee *self, const void *data)</div><div class="ttdoc">Sends data over the network using the XBee LR module.</div><div class="ttdef"><b>Definition</b> xbee_lr.c:192</div></div>
 <div class="ttc" id="axbee__lr_8c_html_a86a1a4d2cb3416504325ac8ee9ace996"><div class="ttname"><a href="xbee__lr_8c.html#a86a1a4d2cb3416504325ac8ee9ace996">XBeeLRHardReset</a></div><div class="ttdeci">void XBeeLRHardReset(XBee *self)</div><div class="ttdef"><b>Definition</b> xbee_lr.c:241</div></div>
+<div class="ttc" id="axbee__lr_8c_html_a8ae202c179f4324905577c9febcd1709"><div class="ttname"><a href="xbee__lr_8c.html#a8ae202c179f4324905577c9febcd1709">XBeeLRSendPacket</a></div><div class="ttdeci">uint8_t XBeeLRSendPacket(XBee *self, const void *data)</div><div class="ttdoc">Sends data over the network using the XBee LR module.</div><div class="ttdef"><b>Definition</b> xbee_lr.c:192</div></div>
 <div class="ttc" id="axbee__lr_8c_html_a8f51e5cba1fa8406644171d3bfccef9a"><div class="ttname"><a href="xbee__lr_8c.html#a8f51e5cba1fa8406644171d3bfccef9a">XBeeLRHandleTransmitStatus</a></div><div class="ttdeci">void XBeeLRHandleTransmitStatus(XBee *self, void *param)</div><div class="ttdef"><b>Definition</b> xbee_lr.c:822</div></div>
 <div class="ttc" id="axbee__lr_8c_html_aa4d75106937bb888ec4fb64b337f5991"><div class="ttname"><a href="xbee__lr_8c.html#aa4d75106937bb888ec4fb64b337f5991">XBeeLRProcess</a></div><div class="ttdeci">void XBeeLRProcess(XBee *self)</div><div class="ttdoc">Processes incoming data and events for the XBee LR module.</div><div class="ttdef"><b>Definition</b> xbee_lr.c:109</div></div>
 <div class="ttc" id="axbee__lr_8c_html_aa9879acddbc3cb54ffb73a7d4fb12a64"><div class="ttname"><a href="xbee__lr_8c.html#aa9879acddbc3cb54ffb73a7d4fb12a64">XBeeLRConnect</a></div><div class="ttdeci">bool XBeeLRConnect(XBee *self, bool blocking)</div><div class="ttdoc">Attempts to connect to the LoRaWAN network using the XBee LR module.</div><div class="ttdef"><b>Definition</b> xbee_lr.c:135</div></div>
