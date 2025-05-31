@@ -134,7 +134,7 @@ struct XBee {
 bool XBeeInit(XBee* self, uint32_t baudrate, void* device);
 bool XBeeConnect(XBee* self, bool blocking);
 bool XBeeDisconnect(XBee* self);
-uint8_t XBeeSendData(XBee* self, const void*);
+uint8_t XBeeSendPacket(XBee* self, const void*);
 bool XBeeSoftReset(XBee* self);
 void XBeeHardReset(XBee* self);
 void XBeeProcess(XBee* self);
@@ -144,6 +144,13 @@ bool XBeeApplyChanges(XBee* self);
 bool XBeeSetAPIOptions(XBee* self, const uint8_t value);
 bool XBeeGetFirmwareVersion(XBee* self, uint32_t* version);
 bool XBeeConfigure(XBee* self, const void* config);
+bool XBeeFactoryReset        (XBee* self);                          /* ATFR */
+bool XBeeExitCommandMode     (XBee* self);                          /* ATCN */
+bool XBeeSetApiEnable        (XBee* self, uint8_t mode);            /* ATAP */
+bool XBeeSetBaudRate         (XBee* self, uint8_t rateCode);        /* ATBD */
+bool XBeeGetLastRssi         (XBee* self, int8_t*  rssiOut);        /* ATDB */
+bool XBeeGetHardwareVersion  (XBee* self, uint16_t* hvOut);         /* ATHV */
+bool XBeeGetSerialNumber     (XBee* self, uint64_t* snOut);         /* ATSH/ATSL */
 
 #if defined(__cplusplus)
 }

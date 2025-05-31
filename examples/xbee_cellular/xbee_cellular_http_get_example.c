@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file xbee_cellular_http_getexample.c
+ * @file xbee_cellular_http_get_example.c
  * @brief Example application demonstrating the use of the XBeeCellular driver.
  *
  * This file contains a sample application that demonstrates how to use the
@@ -56,10 +56,14 @@
 static bool responseReceived = false;
 
 /**
- * Callback triggered when data is received via SOCKET_RECEIVE frame (0xCD).
+ * @brief Callback triggered when data is received via SOCKET_RECEIVE (0xCD)
+ *        or SOCKET_RECEIVE_FROM (0xCE) frame.
  *
- * This function prints out the payload from the remote server in plain text format.
- * Typically used to handle HTTP response content received over TCP.
+ * This function prints the payload from the remote peer in plain text format.
+ * If the source IP and port are known (UDP), they are printed as well.
+ *
+ * @param[in] self Pointer to the XBee instance.
+ * @param[in] data Pointer to the XBeeCellularPacket_t payload descriptor.
  */
 void OnReceiveCallback(XBee* self, void* data) {
     (void)self;
@@ -67,8 +71,16 @@ void OnReceiveCallback(XBee* self, void* data) {
 
     responseReceived = true;
 
+    if (packet->ip[0] != 0 || packet->remotePort != 0) {
+        portDebugPrintf("Received from %u.%u.%u.%u:%u on socket %u\n",
+            packet->ip[0], packet->ip[1], packet->ip[2], packet->ip[3],
+            packet->remotePort, packet->socketId);
+    } else {
+        portDebugPrintf("Received on socket %u\n", packet->socketId);
+    }
+
     portDebugPrintf("[Payload ASCII Dump]:\n");
-    for (int i = 0; i < packet->payloadSize; i++) {
+    for (int i = 0; i < packet->payloadSize; ++i) {
         char c = packet->payload[i];
         portDebugPrintf("%c", (c >= 32 && c <= 126) ? c : '.');
     }
@@ -186,7 +198,7 @@ int main() {
     }
 
     portDebugPrintf("HTTP transaction complete. Exiting.\n");
-    XBeeCellularSocketClose((XBee*)xbee, socketId);
+    XBeeCellularSocketClose((XBee*)xbee, socketId, false);
     XBeeCellularDestroy(xbee);
     return 0;
 }

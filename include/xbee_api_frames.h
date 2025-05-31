@@ -232,12 +232,17 @@
      XBEE_API_TYPE_CELLULAR_SOCKET_CONNECT = 0x42,  ///< Frame to connect a socket
      XBEE_API_TYPE_CELLULAR_SOCKET_CLOSE = 0x43,    ///< Frame to close a socket
      XBEE_API_TYPE_CELLULAR_SOCKET_SEND = 0x44,     ///< Frame to send socket data
+     XBEE_API_TYPE_CELLULAR_SOCKET_SEND_TO = 0x45,  ///< Frame to send UDP data to a specific address
+     XBEE_API_TYPE_CELLULAR_SOCKET_BIND = 0x46,     ///< Frame to bind a socket to a local port
      XBEE_API_TYPE_CELLULAR_SOCKET_CREATE_RESPONSE = 0xC0, ///< Response to socket create
      XBEE_API_TYPE_CELLULAR_SOCKET_OPTION_RESPONSE = 0xC1, ///< Response to socket option
      XBEE_API_TYPE_CELLULAR_SOCKET_CONNECT_RESPONSE = 0xC2, ///< Response to socket connect
+     XBEE_API_TYPE_CELLULAR_SOCKET_CLOSE_RESPONSE = 0xC3, ///< Response to socket close
+     XBEE_API_TYPE_CELLULAR_SOCKET_BIND_RESPONSE = 0xC6, ///< Response to socket bind
+
      XBEE_API_TYPE_CELLULAR_SOCKET_RX = 0xCD,       ///< Frame for receiving data
      XBEE_API_TYPE_CELLULAR_SOCKET_RX_FROM = 0xCE,  ///< Frame for receiving UDP data with source
-    XBEE_API_TYPE_CELLULAR_SOCKET_STATUS = 0xCF, ///< Frame for socket status
+     XBEE_API_TYPE_CELLULAR_SOCKET_STATUS = 0xCF, ///< Frame for socket status
  
      /**< XBee GPIO/ADC Related API Frames */
      XBEE_API_TYPE_IO_DATA_SAMPLE_RX = 0x92,        ///< Frame for receiving IO data samples (GPIO/ADC)

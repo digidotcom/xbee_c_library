@@ -56,7 +56,8 @@
          case AT_AP: return "AP";            ///< API Enable
          case AT_BD: return "BD";            ///< Baud Rate
          case AT_WR: return "WR";            ///< Write to non-volatile memory
-         case AT_RE: return "RE";            ///< Restore factory defaults
+         case AT_RE: return "RE";            ///< Soft Reset
+         case AT_FR: return "FR";            ///< Factory Reset
          case AT_VR: return "VR";            ///< Firmware Version
          case AT_AC: return "AC";            ///< Apply Changes
          case AT_NR: return "NR";            ///< Network Reset
@@ -110,6 +111,8 @@
          case AT_JV: return "JV";            ///< Channel Verification
          case AT_LD: return "LD";            ///< Node Discovery Time
          case AT_AO: return "AO";            ///< API Options
+         case AT_HV: return "HV";            ///< Hardware Version
+
  
          /**< XBee 3 RF Specific AT Commands */
          case AT_CE: return "CE";            ///< Coordinator Enable

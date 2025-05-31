@@ -51,7 +51,7 @@ This section provides an overview of the key methods available in the XBee class
 - `XBeeInit()`: Initializes the XBee module.
 - `XBeeConnect()`: Connects the XBee module to a network.
 - `XBeeDisconnect()`: Disconnects the XBee module from the network.
-- `XBeeSendData()`: Sends data through the XBee module.
+- `XBeeSendPacket()`: Sends data through the XBee module.
 - `XBeeSoftReset()`: Performs a soft reset on the XBee module.
 - `XBeeHardReset()`: Performs a hard reset on the XBee module.
 - `XBeeProcess()`: Processes incoming and outgoing data for the XBee module.
@@ -86,7 +86,7 @@ The following methods are specific to the XBee LR (LoRaWAN) subclass and are **n
 - `XBeeLRSetAppEUI()`: Configures the Application EUI used for OTAA join.
 - `XBeeLRSetAppKey()`: Sets the AppKey for LoRaWAN OTAA authentication.
 - `XBeeLRSetNwkKey()`: Sets the Network Key used for network traffic encryption.
-- `XBeeLRSendData()`: Sends a LoRaWAN uplink packet using the LR frame interface.
+- `XBeeLRSendPacket()`: Sends a LoRaWAN uplink packet using the LR frame interface.
 
 Each of these methods provides essential functionality for managing and communicating with XBee devices within a network. Ensure that you refer to these methods when developing applications that involve XBee modules.
 
@@ -170,7 +170,7 @@ After creating the XBee LR instance, initialize the XBee LR module, configure th
 
 ### Sending Data
 
-To send data over the XBee LR network, use the `XBeeLRSendData` method. Here's an example of preparing and sending a payload:
+To send data over the XBee LR network, use the `XBeeLRSendPacket` method. Here's an example of preparing and sending a payload:
 
 ```c
 // XBeeLR payload to send
@@ -183,7 +183,7 @@ XBeeLRPacket_t packet = {
     .ack = 0,
 };
 
-if (!XBeeSendData(myXbeeLr, &packet)) {
+if (!XBeeSendPacket(myXbeeLr, &packet)) {
     printf("Failed to send data.");
 } else {
     printf("Data sent successfully.");
@@ -307,7 +307,7 @@ int main() {
         .ack = 0,
     };
 
-    if (!XBeeSendData(myXbeeLr, &packet)) {
+    if (!XBeeSendPacket(myXbeeLr, &packet)) {
         printf("Failed to send data.");
     } else {
         printf("Data sent successfully.");

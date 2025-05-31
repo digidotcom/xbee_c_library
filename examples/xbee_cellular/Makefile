@@ -20,17 +20,22 @@ CORE_SRCS = $(SRC_DIR)/xbee.c \
             $(SRC_DIR)/xbee_at_cmds.c \
             $(SRC_DIR)/xbee_cellular.c
 
-EXAMPLE_SRC = $(EXAMPLE_DIR)/xbee_cellular_http_get_example.c
-PORT_SRC    = $(PORTS_DIR)/port_$(PLATFORM).c
+PORT_SRC = $(PORTS_DIR)/port_$(PLATFORM).c
 
-OBJS = $(patsubst %.c, $(BUILD_DIR)/%.o, \
-        $(notdir $(CORE_SRCS)) $(notdir $(EXAMPLE_SRC)) $(notdir $(PORT_SRC)))
+EXAMPLE_HTTP = $(EXAMPLE_DIR)/xbee_cellular_http_get_example.c
+EXAMPLE_UDP  = $(EXAMPLE_DIR)/xbee_cellular_udp_echo_example.c
 
-# Output binary
-TARGET = $(BUILD_DIR)/xbee_cellular_http_get_example
+OBJS_HTTP = $(patsubst %.c, $(BUILD_DIR)/%.o, \
+             $(notdir $(CORE_SRCS)) $(notdir $(EXAMPLE_HTTP)) $(notdir $(PORT_SRC)))
+
+OBJS_UDP = $(patsubst %.c, $(BUILD_DIR)/%.o, \
+            $(notdir $(CORE_SRCS)) $(notdir $(EXAMPLE_UDP)) $(notdir $(PORT_SRC)))
+
+TARGET_HTTP = $(BUILD_DIR)/xbee_cellular_http_get_example
+TARGET_UDP  = $(BUILD_DIR)/xbee_cellular_udp_echo_example
 
 # Default rule
-all: $(BUILD_DIR) $(TARGET)
+all: $(BUILD_DIR) $(TARGET_HTTP) $(TARGET_UDP)
 
 # Create build directory
 $(BUILD_DIR):
@@ -47,7 +52,10 @@ $(BUILD_DIR)/%.o: $(PORTS_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Linking
-$(TARGET): $(OBJS)
+$(TARGET_HTTP): $(OBJS_HTTP)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(TARGET_UDP): $(OBJS_UDP)
 	$(CC) $(CFLAGS) $^ -o $@
 
 clean:

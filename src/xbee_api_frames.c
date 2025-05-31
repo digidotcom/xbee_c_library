@@ -359,6 +359,7 @@
          case XBEE_API_TYPE_LR_RX_PACKET:
          case XBEE_API_TYPE_LR_EXPLICIT_RX_PACKET:
          case XBEE_API_TYPE_CELLULAR_SOCKET_RX:
+         case XBEE_API_TYPE_CELLULAR_SOCKET_RX_FROM:
              if(self->vtable->handleRxPacketFrame){
                  self->vtable->handleRxPacketFrame(self, &frame);
              }

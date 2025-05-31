@@ -189,7 +189,7 @@ bool XBeeLRConnect(XBee* self, bool blocking) {
   * @return xbee_deliveryStatus_t, 0 if successful
   * 
   */
- uint8_t XBeeLRSendData(XBee* self, const void* data) {
+ uint8_t XBeeLRSendPacket(XBee* self, const void* data) {
      // Prepare and send the API frame
      XBeeLRPacket_t *packet = (XBeeLRPacket_t*) data;
      uint8_t frame_data[128];  // Adjust size as needed
@@ -863,7 +863,7 @@ bool XBeeLRConnect(XBee* self, bool blocking) {
      .process = XBeeLRProcess,
      .connect = XBeeLRConnect,
      .disconnect = XBeeLRDisconnect,
-     .sendData = XBeeLRSendData,
+     .sendData = XBeeLRSendPacket,
      .softReset = XBeeLRSoftReset,
      .hardReset = XBeeLRHardReset,
      .connected = XBeeLRConnected,

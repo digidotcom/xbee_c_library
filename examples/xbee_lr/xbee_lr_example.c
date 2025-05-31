@@ -168,7 +168,7 @@ int main() {
                     portDebugPrintf("%02X", examplePayload[i]);
                 }
                 portDebugPrintf("\n");
-                if (XBeeSendData((XBee*)myXbeeLr, &packet)) {
+                if (XBeeSendPacket((XBee*)myXbeeLr, &packet)) {
                     printf("Failed to send data.\n");
                 } else {
                     printf("Data sent successfully.\n");

@@ -72,7 +72,7 @@ void test_XBeeCellularDisconnect_should_send_AT_SD_and_return_true(void) {
     TEST_ASSERT_TRUE(XBeeCellularDisconnect(self));
 }
 
-void test_XBeeCellularSendData_should_return_success_when_frame_sent(void) {
+void test_XBeeCellularSendPacket_should_return_success_when_frame_sent(void) {
     XBeeCellularPacket_t pkt = {
         .protocol = 1,
         .port = 80,
@@ -80,7 +80,7 @@ void test_XBeeCellularSendData_should_return_success_when_frame_sent(void) {
         .payloadSize = 4
     };
     apiSendFrame_ExpectAndReturn(self, XBEE_API_TYPE_CELLULAR_TX_IPV4, NULL, 11, API_SEND_SUCCESS);
-    TEST_ASSERT_EQUAL_HEX8(0x00, XBeeCellularSendData(self, &pkt));
+    TEST_ASSERT_EQUAL_HEX8(0x00, XBeeCellularSendPacket(self, &pkt));
 }
 
 void test_XBeeCellularSoftReset_should_send_AT_SD(void) {
@@ -139,7 +139,7 @@ void test_XBeeCellularSocketClose_should_return_false_on_send_failure(void) {
 //     RUN_TEST(test_XBeeCellularConnected_should_return_true_when_AI_is_zero);
 //     RUN_TEST(test_XBeeCellularConnect_should_return_false_when_attach_fails);
 //     RUN_TEST(test_XBeeCellularDisconnect_should_send_AT_SD_and_return_true);
-//     RUN_TEST(test_XBeeCellularSendData_should_return_success_when_frame_sent);
+//     RUN_TEST(test_XBeeCellularSendPacket_should_return_success_when_frame_sent);
 //     RUN_TEST(test_XBeeCellularSoftReset_should_send_AT_SD);
 //     RUN_TEST(test_XBeeCellularHardReset_should_not_crash);
 //     RUN_TEST(test_XBeeCellularConfigure_should_copy_config);

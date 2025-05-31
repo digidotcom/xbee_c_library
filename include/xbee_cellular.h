@@ -46,8 +46,9 @@ extern "C" {
  * @brief Supported socket protocols.
  */
 typedef enum {
+    XBEE_PROTOCOL_UDP = 0x00,  
     XBEE_PROTOCOL_TCP = 0x01,
-    XBEE_PROTOCOL_UDP = 0x02
+    XBEE_PROTOCOL_SSL = 0x04
 } xbee_protocol_t;
 
 /**
@@ -80,6 +81,7 @@ typedef struct XBeeCellularPacket_s {
     uint8_t frameId;           ///< Frame ID used for tracking TX responses
 
     // RX-specific
+    uint8_t socketId;          ///< Socket ID on which data was received
     uint16_t remotePort;       ///< Source port of incoming packet
     uint8_t status;            ///< Reserved status byte in RX frames
 } XBeeCellularPacket_t;
@@ -129,7 +131,7 @@ bool XBeeCellularConnected(XBee* self);
 /**
  * @brief Sends a payload using UDP or TCP over cellular.
  */
-uint8_t XBeeCellularSendData(XBee* self, const void* packet);
+uint8_t XBeeCellularSendPacket(XBee* self, const void* packet);
 
 /**
  * @brief Issues a soft reset using AT commands.
@@ -179,7 +181,18 @@ bool XBeeCellularSocketSetOption(XBee* self, uint8_t socketId, uint8_t option, c
 /**
  * @brief Closes the specified socket.
  */
-bool XBeeCellularSocketClose(XBee* self, uint8_t socketId);
+bool XBeeCellularSocketClose(XBee* self, uint8_t socketId, bool blocking);
+
+/**
+ * @brief Binds a socket to a local UDP port.
+ */
+bool XBeeCellularSocketBind(XBee* self, uint8_t socketId, uint16_t port, bool blocking);
+
+/**
+ * @brief Sends a UDP datagram to a remote IP and port.
+ */
+bool XBeeCellularSocketSendTo(XBee* self, uint8_t socketId, const uint8_t* ip, uint16_t port,
+                              const uint8_t* payload, uint16_t payloadLen);
 
 #ifdef __cplusplus
 }

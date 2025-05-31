@@ -128,14 +128,14 @@ bool XBeeCellularDisconnect(XBee* self) {
 
 /*****************************************************************************/
 /**
- * @brief Sends a UDP/TCP data packet over the cellular interface.
+ * @brief Sends a stateless IPv4 UDP/TCP data packet over the cellular interface.
  *
  * @param[in] self Pointer to the XBee instance.
  * @param[in] data Pointer to a XBeeCellularPacket_t structure.
  *
  * @return 0 if sent successfully, 0xFF on error.
  ******************************************************************************/
-uint8_t XBeeCellularSendData(XBee* self, const void* data) {
+uint8_t XBeeCellularSendPacket(XBee* self, const void* data) {
     XBeeCellularPacket_t* packet = (XBeeCellularPacket_t*) data;
     uint8_t frame[128];
     uint8_t frameId = self->frameIdCntr;
@@ -213,10 +213,10 @@ bool XBeeCellularConfigure(XBee* self, const void* config) {
 
 /*****************************************************************************/
 /**
- * @brief Handles incoming Socket Receive (0xCD) frames from the XBee Cellular module.
+ * @brief Handles incoming Socket Receive (0xCD) and Receive From (0xCE) frames.
  *
- * This function parses socket receive frames and extracts the payload and metadata.
- * It provides detailed debug output and invokes the registered receive callback.
+ * This function parses both connected socket receive (0xCD) and UDP datagram
+ * receive-from (0xCE) frames and dispatches them via the registered callback.
  *
  * @param[in] self Pointer to the XBee instance.
  * @param[in] param Pointer to the received API frame data.
@@ -229,48 +229,60 @@ static void XBeeCellularHandleRxPacket(XBee* self, void* param) {
 
     xbee_api_frame_t* frame = (xbee_api_frame_t*)param;
 
-    if (frame->type != XBEE_API_TYPE_CELLULAR_SOCKET_RX) {
+    if (frame->type != XBEE_API_TYPE_CELLULAR_SOCKET_RX &&
+        frame->type != XBEE_API_TYPE_CELLULAR_SOCKET_RX_FROM) {
         XBEEDebugPrint("HandleRxPacket: Unexpected frame type 0x%02X\n", frame->type);
         return;
     }
 
     XBEEDebugPrint("HandleRxPacket: Frame Length: %u\n", frame->length);
 
-    if (frame->length < 3) {
+    if ((frame->type == XBEE_API_TYPE_CELLULAR_SOCKET_RX && frame->length < 3) ||
+        (frame->type == XBEE_API_TYPE_CELLULAR_SOCKET_RX_FROM && frame->length < 9)) {
         XBEEDebugPrint("HandleRxPacket: Frame too short to be valid\n");
         return;
     }
 
-     #if XBEE_DEBUG_PRINT_ENABLED
-        uint8_t frameId  = frame->data[0];
-        uint8_t socketId = frame->data[1];
-        uint8_t status   = frame->data[2];
-    #endif
-    uint8_t* payload = &frame->data[3];
-    uint16_t payloadSize = frame->length - 3;
+    const uint8_t* data = frame->data;
+    uint8_t frameId = data[0];
+    uint8_t socketId = data[1];
+    uint8_t status = data[2];
 
     XBeeCellularPacket_t packet = {0};
-    packet.payload = payload;
-    packet.payloadSize = payloadSize;
-    packet.protocol = 0xFF;  // Not present in frame
-    packet.port = 0;         // Not present in frame
+    packet.frameId = frameId;
+    packet.status = status;
+    packet.socketId = socketId;
+    packet.protocol = 0xFF; // Not encoded in RX
+
+    if (frame->type == XBEE_API_TYPE_CELLULAR_SOCKET_RX) {
+        // Connected socket RX
+        packet.payload = (uint8_t*)&data[3];
+        packet.payloadSize = frame->length - 3;
+        packet.port = 0;
+        memset(packet.ip, 0, 4);
+    } else {
+        // UDP RX_FROM
+        memcpy(packet.ip, &data[3], 4);
+        packet.remotePort = (data[7] << 8) | data[8];
+        packet.payload = (uint8_t*)&data[9];
+        packet.payloadSize = frame->length - 9;
+        packet.port = packet.remotePort;
+    }
 
     XBEEDebugPrint("HandleRxPacket: FrameID: 0x%02X, Socket ID: %u, Status: 0x%02X\n",
                    frameId, socketId, status);
-    XBEEDebugPrint("HandleRxPacket: Payload size: %u bytes\n", payloadSize);
+    XBEEDebugPrint("HandleRxPacket: Payload size: %u bytes\n", packet.payloadSize);
 
     XBEEDebugPrint("[Payload HEX Dump]:\n");
-    for (int i = 0; i < payloadSize && i < 64; ++i) {
-        XBEEDebugPrint("%02X ", payload[i]);
+    for (int i = 0; i < packet.payloadSize && i < 64; ++i) {
+        XBEEDebugPrint("%02X ", packet.payload[i]);
     }
-    if (payloadSize > 64) XBEEDebugPrint("... [truncated]\n");
+    if (packet.payloadSize > 64) XBEEDebugPrint("... [truncated]\n");
     else XBEEDebugPrint("\n");
 
     XBEEDebugPrint("[Payload ASCII Dump]:\n");
-    for (int i = 0; i < payloadSize && i < 64; ++i) {
-        #if XBEE_DEBUG_PRINT_ENABLED
-            char c = payload[i];
-        #endif
+    for (int i = 0; i < packet.payloadSize && i < 64; ++i) {
+        char c = packet.payload[i];
         XBEEDebugPrint("%c", (c >= 32 && c <= 126) ? c : '.');
     }
     XBEEDebugPrint("\n");
@@ -289,7 +301,7 @@ static const XBeeVTable XBeeCellularVTable = {
     .process = XBeeCellularProcess,
     .connect = XBeeCellularConnect,
     .disconnect = XBeeCellularDisconnect,
-    .sendData = XBeeCellularSendData,
+    .sendData = XBeeCellularSendPacket,
     .softReset = XBeeCellularSoftReset,
     .hardReset = XBeeCellularHardReset,
     .connected = XBeeCellularConnected,
@@ -539,28 +551,31 @@ bool XBeeCellularSocketSetOption(XBee* self, uint8_t socketId, uint8_t option, c
 /**
  * @brief Closes an open socket on the XBee Cellular module.
  *
- * This function sends a SOCKET_CLOSE (0x41) API frame to the XBee module with the specified
- * socket ID and waits for a corresponding SOCKET_STATUS (0xCF) frame indicating that the
- * socket was successfully closed by the XBee or the peer.
+ * This function sends a SOCKET_CLOSE (0x43) API frame to the XBee module with the specified
+ * socket ID. If `blocking` is true, it waits for a SOCKET_STATUS (0xCF) frame indicating
+ * that the socket was successfully closed.
  *
  * @param[in] self Pointer to the XBee instance.
  * @param[in] socketId The socket ID to close.
+ * @param[in] blocking If true, waits for close confirmation via 0xCF frame.
  *
- * @return true if the socket was successfully closed, false otherwise.
+ * @return true if close frame sent (and confirmed if blocking), false otherwise.
  ******************************************************************************/
-bool XBeeCellularSocketClose(XBee* self, uint8_t socketId) {
+bool XBeeCellularSocketClose(XBee* self, uint8_t socketId, bool blocking) {
     if (!self) return false;
 
     uint8_t frameId = self->frameIdCntr++;
     uint8_t frame[2] = { frameId, socketId };
 
-    // Send SOCKET_CLOSE request
     if (apiSendFrame(self, XBEE_API_TYPE_CELLULAR_SOCKET_CLOSE, frame, sizeof(frame)) != API_SEND_SUCCESS) {
         XBEEDebugPrint("SocketClose: Failed to send close frame\n");
         return false;
     }
 
-    // Wait for SOCKET_STATUS (0xCF) frame confirming the close
+    if (!blocking)
+        return true;
+
+    // Wait for SOCKET_STATUS (0xCF) response indicating closure
     xbee_api_frame_t response;
     uint32_t start = self->htable->PortMillis();
     while ((self->htable->PortMillis() - start) < 3000) {
@@ -569,18 +584,111 @@ bool XBeeCellularSocketClose(XBee* self, uint8_t socketId) {
 
             if (response.data[1] == frameId &&
                 response.data[2] == socketId &&
-                response.data[3] == 0x01) {  // 0x01 = Closed by peer or local close
+                response.data[3] == 0x01) {  // 0x01 = closed
                 XBEEDebugPrint("SocketClose: Socket %u closed\n", socketId);
                 return true;
-            } else {
-                XBEEDebugPrint("SocketClose: Unexpected socket status (ID: %u, Status: 0x%02X)\n",
-                               response.data[2], response.data[3]);
-                return false;
             }
+
+            XBEEDebugPrint("SocketClose: Unexpected socket status (ID: %u, Status: 0x%02X)\n",
+                           response.data[2], response.data[3]);
+            return false;
         }
         self->htable->PortDelay(10);
     }
 
     XBEEDebugPrint("SocketClose: Timeout waiting for socket status\n");
     return false;
+}
+
+/*****************************************************************************/
+/**
+ * @brief Binds a UDP socket to a local port on the XBee Cellular module.
+ *
+ * This function sends a SOCKET_BIND (0x46) API frame to the XBee module,
+ * specifying the socket ID and local port number. If blocking is enabled,
+ * the function waits for a corresponding SOCKET_BIND_RESPONSE (0xC6) frame
+ * indicating the bind result.
+ *
+ * @param[in] self Pointer to the XBee instance.
+ * @param[in] socketId The socket ID to bind.
+ * @param[in] port Local port to bind to (host byte order).
+ * @param[in] blocking If true, waits for a bind response from the module.
+ *
+ * @return true if bind frame was sent (and acknowledged if blocking), false otherwise.
+ ******************************************************************************/
+bool XBeeCellularSocketBind(XBee* self, uint8_t socketId, uint16_t port, bool blocking) {
+    if (!self) return false;
+
+    uint8_t frameId = self->frameIdCntr++;
+    uint8_t frame[4];
+    uint8_t offset = 0;
+    frame[offset++] = frameId;
+    frame[offset++] = socketId;
+    frame[offset++] = (port >> 8) & 0xFF;
+    frame[offset++] = port & 0xFF;
+
+    if (apiSendFrame(self, XBEE_API_TYPE_CELLULAR_SOCKET_BIND, frame, offset) != API_SEND_SUCCESS) {
+        XBEEDebugPrint("SocketBind: Failed to send bind frame\n");
+        return false;
+    }
+
+    if (!blocking)
+        return true;
+
+    // Wait for SOCKET_BIND_RESPONSE (0xC6)
+    xbee_api_frame_t response;
+    uint32_t start = self->htable->PortMillis();
+    while ((self->htable->PortMillis() - start) < 3000) {
+        if (apiReceiveApiFrame(self, &response) == API_SEND_SUCCESS &&
+            response.type == XBEE_API_TYPE_CELLULAR_SOCKET_BIND_RESPONSE) {
+
+            if (response.data[1] == frameId &&
+                response.data[2] == socketId &&
+                response.data[3] == 0x00) {  // 0x00 = success
+                XBEEDebugPrint("SocketBind: Socket %u bound to port 0x%04X\n", socketId, port);
+                return true;
+            }
+
+            XBEEDebugPrint("SocketBind: Unexpected bind status (ID: %u, Status: 0x%02X)\n",
+                           response.data[2], response.data[3]);
+            return false;
+        }
+        self->htable->PortDelay(10);
+    }
+
+    XBEEDebugPrint("SocketBind: Timeout waiting for bind status\n");
+    return false;
+}
+
+/*****************************************************************************/
+/**
+ * @brief Sends a UDP packet to a specific IP:port using an open socket.
+ *
+ * Constructs a SOCKET_SEND_TO (0x45) API frame and transmits it.
+ *
+ * @param[in] self Pointer to the XBee instance.
+ * @param[in] socketId Socket ID to use for sending.
+ * @param[in] ip Destination IPv4 address (4 bytes).
+ * @param[in] port Destination port (host byte order).
+ * @param[in] payload Pointer to data buffer.
+ * @param[in] payloadLen Length of data to send (1–120 bytes).
+ *
+ * @return true if the frame was sent successfully, false otherwise.
+ ******************************************************************************/
+bool XBeeCellularSocketSendTo(XBee* self, uint8_t socketId, const uint8_t* ip, uint16_t port,
+                              const uint8_t* payload, uint16_t payloadLen) {
+    if (!self || !ip || !payload || payloadLen == 0 || payloadLen > 120) return false;
+
+    uint8_t frame[128];
+    uint8_t offset = 0;
+
+    frame[offset++] = self->frameIdCntr++;
+    frame[offset++] = socketId;
+    memcpy(&frame[offset], ip, 4); offset += 4;
+    frame[offset++] = (port >> 8) & 0xFF;
+    frame[offset++] = port & 0xFF;
+    frame[offset++] = 0x00;  // Transmit options
+    memcpy(&frame[offset], payload, payloadLen); offset += payloadLen;
+
+    return (apiSendFrame(self, XBEE_API_TYPE_CELLULAR_SOCKET_SEND_TO, frame, offset) == API_SEND_SUCCESS);
 }

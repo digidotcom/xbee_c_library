@@ -7,8 +7,8 @@
  * for initializing the module, connecting/disconnect to the nework, 
  * sending and receiving data, and handling AT commands.
  * 
- * @version 1.1
- * @date 2025-05-01
+ * @version 1.2
+ * @date 2025-05-31
  * 
  * @license MIT
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -94,23 +94,19 @@ bool XBeeDisconnect(XBee* self) {
  * 
  * @return xbee_deliveryStatus_t, 0 if successful
  */
-uint8_t XBeeSendData(XBee* self, const void* data) {
+uint8_t XBeeSendPacket(XBee* self, const void* data) {
     return self->vtable->sendData(self, data);
 }
 
 /**
- * @brief Performs a soft reset of the XBee module.
- * 
- * This function invokes the `soft_reset` method defined in the XBee subclass's 
- * virtual table (vtable) to perform a soft reset of the XBee module. A soft reset 
- * typically involves resetting the module's state without a full power cycle.
- * 
+ * @brief Performs a module reboot (ATRE).
+ *
  * @param[in] self Pointer to the XBee instance.
- * 
- * @return bool Returns true if the soft reset is successful, otherwise false.
+ *
+ * @return bool True if the command was sent successfully, otherwise false.
  */
-bool XBeeSoftReset(XBee* self) {
-    return self->vtable->softReset(self);
+bool XBeeSoftReset(XBee* self){
+    return apiSendAtCommand(self, AT_RE, NULL, 0) == API_SEND_SUCCESS;
 }
 
 /**
@@ -273,5 +269,155 @@ bool XBeeGetFirmwareVersion(XBee* self, uint32_t* version) {
     }
 
     *version = (response[0] << 24) | (response[1] << 16) | (response[2] << 8) | response[3];
+    return true;
+}
+
+/**
+ * @brief Restores factory defaults (ATFR).
+ *
+ * Sends the `AT_FR` command and returns when the frame is accepted.
+ *
+ * @param[in] self Pointer to the XBee instance.
+ *
+ * @return bool True if the command was sent successfully, otherwise false.
+ */
+bool XBeeFactoryReset(XBee* self)
+{
+    return apiSendAtCommand(self, AT_FR, NULL, 0) == API_SEND_SUCCESS;
+}
+
+/**
+ * @brief Performs a module reboot (ATRE).
+ *
+ * @param[in] self Pointer to the XBee instance.
+ *
+ * @return bool True if the command was sent successfully, otherwise false.
+ */
+bool XBeeSoftRestart(XBee* self){
+    return apiSendAtCommand(self, AT_RE, NULL, 0) == API_SEND_SUCCESS;
+}
+
+/**
+ * @brief Exits AT-command mode (ATCN).
+ *
+ * Useful after using legacy “transparent” `+++` mode.
+ *
+ * @param[in] self Pointer to the XBee instance.
+ *
+ * @return bool True if the command was sent successfully, otherwise false.
+ */
+bool XBeeExitCommandMode(XBee* self){
+    return apiSendAtCommand(self, AT_CN, NULL, 0) == API_SEND_SUCCESS;
+}
+
+/**
+ * @brief Enables or disables API mode (ATAP).
+ *
+ * @param[in] self  Pointer to the XBee instance.
+ * @param[in] mode  0 = Transparent, 1 = API (no escape), 2 = API-escaped.
+ *
+ * @return bool True if the command was accepted, otherwise false.
+ */
+bool XBeeSetApiEnable(XBee* self, uint8_t mode){
+    return apiSendAtCommand(self, AT_AP, &mode, 1) == API_SEND_SUCCESS;
+}
+
+/**
+ * @brief Changes the UART baud-rate (ATBD).
+ *
+ * Pass the *rate code* defined by Digi (e.g. 3 → 9600, 7 → 115200).
+ *
+ * @param[in] self      Pointer to the XBee instance.
+ * @param[in] rateCode  Digi baud-rate code.
+ *
+ * @return bool True if the baud-rate was accepted, otherwise false.
+ */
+bool XBeeSetBaudRate(XBee* self, uint8_t rateCode){
+    return apiSendAtCommand(self, AT_BD, &rateCode, 1) == API_SEND_SUCCESS;
+}
+
+/**
+ * @brief Reads last-hop RSSI in dBm (ATDB).
+ *
+ * @param[in]  self     Pointer to the XBee instance.
+ * @param[out] rssiOut  Pointer that receives signed RSSI in dBm.
+ *
+ * @return bool True if RSSI was read successfully, otherwise false.
+ */
+bool XBeeGetLastRssi(XBee* self, int8_t* rssiOut){
+    if (!rssiOut) return false;
+
+    uint8_t resp;
+    uint8_t len = 0;
+
+    if (apiSendAtCommandAndGetResponse(self, AT_DB, NULL, 0,
+                                       &resp, &len, 2000, sizeof(resp)) != API_SEND_SUCCESS || len != 1)
+    {
+        XBEEDebugPrint("Failed to read RSSI (ATDB)\n");
+        return false;
+    }
+
+    *rssiOut = -(int8_t)resp;   /* Digi returns a positive offset */
+    return true;
+}
+
+/**
+ * @brief Retrieves the hardware revision (ATHV).
+ *
+ * @param[in]  self    Pointer to the XBee instance.
+ * @param[out] hvOut   Pointer to receive 16-bit hardware version.
+ *
+ * @return bool True if the hardware version was retrieved, otherwise false.
+ */
+bool XBeeGetHardwareVersion(XBee* self, uint16_t* hvOut){
+    if (!hvOut) return false;
+
+    uint8_t resp[2];
+    uint8_t len = 0;
+
+    if (apiSendAtCommandAndGetResponse(self, AT_HV, NULL, 0,
+                                       resp, &len, 2000, sizeof(resp)) != API_SEND_SUCCESS || len != 2)
+    {
+        XBEEDebugPrint("Failed to retrieve hardware version (ATHV)\n");
+        return false;
+    }
+
+    *hvOut = (uint16_t)resp[0] << 8 | resp[1];
+    return true;
+}
+
+/**
+ * @brief Retrieves the 64-bit factory serial number (ATSH + ATSL).
+ *
+ * @param[in]  self    Pointer to the XBee instance.
+ * @param[out] snOut   Pointer to receive the 64-bit serial number.
+ *
+ * @return bool True if the serial number was retrieved, otherwise false.
+ */
+bool XBeeGetSerialNumber(XBee* self, uint64_t* snOut){
+    if (!snOut) return false;
+
+    uint8_t hi[4], lo[4];
+    uint8_t lenHi = 0, lenLo = 0;
+
+    if (apiSendAtCommandAndGetResponse(self, AT_SH, NULL, 0,
+                                       hi, &lenHi, 2000, sizeof(hi)) != API_SEND_SUCCESS || lenHi != 4)
+    {
+        XBEEDebugPrint("Failed to retrieve serial high (ATSH)\n");
+        return false;
+    }
+
+    if (apiSendAtCommandAndGetResponse(self, AT_SL, NULL, 0,
+                                       lo, &lenLo, 2000, sizeof(lo)) != API_SEND_SUCCESS || lenLo != 4)
+    {
+        XBEEDebugPrint("Failed to retrieve serial low (ATSL)\n");
+        return false;
+    }
+
+    *snOut = ((uint64_t)hi[0] << 56) | ((uint64_t)hi[1] << 48) |
+             ((uint64_t)hi[2] << 40) | ((uint64_t)hi[3] << 32) |
+             ((uint64_t)lo[0] << 24) | ((uint64_t)lo[1] << 16) |
+             ((uint64_t)lo[2] <<  8) |  (uint64_t)lo[3];
+
     return true;
 }

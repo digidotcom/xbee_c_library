@@ -106,7 +106,7 @@ void test_XBeeLRSetClass_should_send_AT_LC_command(void) {
     TEST_ASSERT_TRUE(XBeeLRSetClass(&mockXbee, classVal));
 }
 
-void test_XBeeLRSendData_should_send_and_wait_for_tx_status(void) {
+void test_XBeeLRSendPacket_should_send_and_wait_for_tx_status(void) {
     XBeeLRPacket_t packet = {
         .payload = (uint8_t*)"hi",
         .payloadSize = 2,
@@ -118,7 +118,7 @@ void test_XBeeLRSendData_should_send_and_wait_for_tx_status(void) {
     mockXbee.deliveryStatus = 0x00;
 
     apiSendFrame_ExpectAndReturn(&mockXbee, XBEE_API_TYPE_LR_TX_REQUEST, NULL, 5, API_SEND_SUCCESS);
-    TEST_ASSERT_EQUAL_UINT8(0x00, XBeeLRSendData(&mockXbee, &packet));
+    TEST_ASSERT_EQUAL_UINT8(0x00, XBeeLRSendPacket(&mockXbee, &packet));
 }
 
 // void test_XBeeLRHandleTransmitStatus_should_parse_and_set_flags(void) {
@@ -158,7 +158,7 @@ void test_XBeeLRSendData_should_send_and_wait_for_tx_status(void) {
 //     RUN_TEST(test_XBeeLRSetAppEUI_should_return_true_for_valid_input);
 //     RUN_TEST(test_XBeeLRSetAppEUI_should_return_false_for_invalid_input);
 //     RUN_TEST(test_XBeeLRSetClass_should_send_AT_LC_command);
-//     RUN_TEST(test_XBeeLRSendData_should_send_and_wait_for_tx_status);
+//     RUN_TEST(test_XBeeLRSendPacket_should_send_and_wait_for_tx_status);
 //     RUN_TEST(test_XBeeLRHandleTransmitStatus_should_parse_and_set_flags);
 //     RUN_TEST(test_XBeeLRHandleRxPacket_should_invoke_receive_callback);
 //     return UNITY_END();

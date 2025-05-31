@@ -97,7 +97,7 @@
  bool XBeeLRSetChannelsMask(XBee* self, const char* value);
  bool XBeeLRInit(XBee* self, uint32_t baudRate, void* device);
  bool XBeeLRConnected(XBee* self);
- uint8_t XBeeLRSendData(XBee* self, const void* data);
+ uint8_t XBeeLRSendPacket(XBee* self, const void* data);
  
  #if defined(__cplusplus)
  }

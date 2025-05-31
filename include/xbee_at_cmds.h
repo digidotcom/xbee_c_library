@@ -60,7 +60,8 @@ typedef enum {
     AT_AP,   /**< API Enable */
     AT_BD,   /**< Baud Rate */
     AT_WR,   /**< Write to non-volatile memory */
-    AT_RE,   /**< Restore factory defaults */
+    AT_RE,   /**< Soft Reset */
+    AT_FR,   /**< Factory Reset */
     AT_VR,   /**< Firmware Version */
     AT_AC,   /**< Apply Changes */
     AT_NR,   /**< Network Reset */
@@ -114,7 +115,7 @@ typedef enum {
     AT_JV,   /**< Channel Verification */
     AT_LD,   /**< Node Discovery Time */
     AT_AO,   /**< API Options */
-
+    AT_HV,   /**< Hardware Version */
     //@todo: move xbee familiar specific commands to their own file
     
     /**< XBee 3 RF Specific AT Commands */
